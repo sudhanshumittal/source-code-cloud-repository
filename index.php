@@ -9,10 +9,18 @@ else //redirect
     <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
 	<link rel = "stylesheet" href="assets/css/bootstrap.min.css">
 	<link href="assets/css/prettify.css" type="text/css" rel="stylesheet" />
+	<style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+		padding-left: 60px;
+		padding-right: 60px;
+	  }
+    </style>
 	<title>IITG Code Repository</title>
 </head>
-<body onload="prettyPrint()">
-	<div class="navbar navbar-inverse">
+<body onload="prettyPrint()" >
+	<div class="navbar navbar-inverse navbar-fixed-top">
 		  <div class="navbar-inner">
 			<div class="container">
 			  <a class="brand" href="#">Code Repo</a>
@@ -121,7 +129,7 @@ else //redirect
 			</div>		
 			</div>
 		  <!--Body content-->
-			<div class="span3">
+			<div class="span3" id="comments">
 			  <?php 
 			   if( isset($_GET['project'])) comments();
 			  ?>
@@ -202,7 +210,7 @@ else //redirect
 		echo '<button class ="btn btn-primary">comment</button><hr>';
 		
 		
-		for( $i=0; $i<3; $i++){
+		for( $i=0; $i<13; $i++){
 			//echo '<div class="row span12 pull-right">';
 			//echo '<div class="row span12 pull-right">
 			echo '<dt><a href="#">sudhanshu mittal</a></dt>

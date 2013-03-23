@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <?php
 if(isset($_GET['searchText'])) $searchText =  $_GET['searchText'];
-else //redirect
+else header("Location: ./index.php");
 ?>
 <html>
 <head>
@@ -9,9 +9,17 @@ else //redirect
     <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
 	<link rel = "stylesheet" href="assets/css/bootstrap.min.css">
 	<title>IITG Code Repository</title>
+	 <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+		padding-left: 60px;
+		padding-right: 60px;
+	  }
+    </style>
 </head>
 <body onload="prettyPrint()">
-	<div class="navbar navbar-inverse">
+	<div class="navbar navbar-inverse navbar-fixed-top">
 		  <div class="navbar-inner">
 			<div class="container">
 			  <a class="brand" href="#">Code Repo</a>
@@ -26,19 +34,31 @@ else //redirect
 				<form class="navbar-search pull-right" method ="GET" action = "search.php">
 					<div class="input-prepend">					  
 					  <input class="search-query span4" id="inputIcon" type="text" name ="searchText" placeholder="Search someone or something…" value="<?php
-					  echo $searchText?>">
+					  echo $searchText;?>">
 					</div>				  
 				</form>
 			</div>
 		  </div>
 		</div>
 
-	<div class="container-fluid">
+	<div class="container-fluid span12 offset3">
 	   <?php
-	    search($searchText);
-	   echo '<div class="row-fluid">		
-	   <hr>
-	   </div>';
+	   $results =  search($searchText);
+	   //var_dump($results);
+	   foreach( $results as $i){
+		   echo '<div class="row-fluid " style = "background-color:#E8EFFD;">
+				<div class="row-fluid ">
+				<h5><span class="badge">1 </span><a href="project.php?user=sudhanshumittal" > username </a>/ <a href ="#">projectname</a></h5>
+				</div>
+				<div class="row-fluid ">
+				<dl class="dl-horizontal"></d>
+				<dt>Rating</dt>
+				<dd>7/10</dd>
+				<dt>Description</dt>
+				<dd>blabblablabl</dd>
+				</div>
+		   </div><hr>';
+	   }
 	   ?>
 	</div>
 	<script src="assets/js/jquery-1.9.1.min.js"></script>
@@ -56,6 +76,7 @@ else //redirect
 </html>
 <?php
 	function search($searchText){
-		//return $i;
+		$i= Array(1,2,3);
+		return $i;
 	}
 ?>
