@@ -26,7 +26,7 @@ else //redirect
 			  </div><!--/.nav-collapse -->
 				<form class="navbar-search pull-right" method ="GET" action = "search.php">
 					<div class="input-prepend">					  
-					  <input class=" span4" id="inputIcon" type="text" name ="searchText" placeholder="Search someone or something…">
+					  <input class="search-query span4" id="inputIcon" type="text" name ="searchText" placeholder="Search someone or something…">
 					</div>				  
 				</form>
 			</div>
@@ -38,12 +38,12 @@ else //redirect
 		<div class = "row-fluid">
 		<h1>Sudhanshu Mittal</h1>
 		<div class="btn-group offset6">
-			  <button class="btn disabled">Add project</button>
-			  <button class="btn <?php if($user !== "sudhanshu") echo "disabled" ;?>">Drop project</button>
+			  <button class="btn <?php if($user !== "sudhanshumittal") echo "disabled" ;?>" href="#addProjectModal" data-toggle="modal">Add project</button>
+			  <button class="btn <?php if($user !== "sudhanshumittal") echo "disabled" ;?>" href="#dropProjectModal" data-toggle="modal">Drop project</button>
 			  
-			  <button class="btn <?php if($user !== "sudhanshu") echo "disabled" ;?>">Add file</button>
-			  <button class="btn <?php if($user !== "sudhanshu") echo "disabled" ;?>">Drop file</button>
-			  <button class="btn" onClick= "download()">Download</button>
+			  <button class="btn <?php if($user !== "sudhanshumittal") echo "disabled" ;?>" href="#addFileModal" data-toggle="modal">Add file</button>
+			  <button class="btn <?php if($user !== "sudhanshumittal") echo "disabled" ;?>" href="#dropFileModal" data-toggle="modal">Drop file</button>
+			  <button class="btn" onClick= "download()" >Download</button>
 			</div>
 		</div>
 		<hr>
@@ -130,20 +130,68 @@ else //redirect
 		</div>
 	  
 	</div>
+	<!-- add project form -->
+	<div id="addProjectModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="myModalLabel">Add a new Project</h3>
+	  </div>
+	  <div class="modal-body">
+		<p>One fine body…</p>
+	  </div>
+	  <div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		<button class="btn btn-primary">Save changes</button>
+	  </div>
+	</div>
+	<!-- drop project form -->
+	<div id="dropProjectModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="myModalLabel">Drop the following Projects</h3>
+	  </div>
+	  <div class="modal-body">
+		<p>One fine body…</p>
+	  </div>
+	  <div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		<button class="btn btn-primary">Save changes</button>
+	  </div>
+	</div>
+	<!-- add file form -->
+	<div id="addFileModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="myModalLabel">Add a new file to this Project</h3>
+	  </div>
+	  <div class="modal-body">
+		<p>One fine body…</p>
+	  </div>
+	  <div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		<button class="btn btn-primary">Save changes</button>
+	  </div>
+	</div>
+	<!-- drop file form -->
+	<div id="dropFileModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="myModalLabel">Drop files from this Project</h3>
+	  </div>
+	  <div class="modal-body">
+		<p>One fine body…</p>
+	  </div>
+	  <div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		<button class="btn btn-primary">Save changes</button>
+	  </div>
+	</div>
+	
 	<script src="assets/js/jquery-1.9.1.min.js"></script>
 	<script src="assets/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="assets/js/prettify.js"></script>
 
-	<script type="text/javascript">
-	function download(){
-		alert("hi");
-	};
-	$(document).ready(function() { 
-	//alert('hi');
-    $('#pageContent').load('input.cpp');
-	}); 
-	</script>
-</body>
+	</body>
 </html>
 <?php
 	function comments(){
