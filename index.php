@@ -205,6 +205,8 @@ else //redirect
 	function comments(){
 		echo '<h4>Comments</h4><hr>';
 		//echo '<div class="media">
+		
+		
 		echo '<dl class = "">';
 		echo '<dt><small><textarea rows="3" placeholder="Say something..." class= "span12"></textarea></small><dt>';
 		echo '<button class ="btn btn-primary">comment</button><hr>';
