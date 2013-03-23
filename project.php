@@ -1,7 +1,28 @@
 <!DOCTYPE html>
 <?php
-if(isset($_GET['user'])) $user =  $_GET['user'];
-else //redirect
+$user = "";
+$project ="";
+$file ="";
+$url="./project.php";
+if(isset($_GET['user'])){
+ $user =  $_GET['user'];
+$url.="?user=".$user;
+
+}
+else {
+}//redirect
+if(isset($_GET['project'])){
+ $project =  $_GET['project'];
+ $url.="&project=".$project;
+ }
+if(isset($_GET['file'])){
+ $file =  $_GET['file'];
+$url.="&file=".$file;
+ }
+//echo "\nuser =".$user;
+//echo "\nproject =".$project;
+//echo "./project.php?".$user."&".$project."&".$file ;
+if(isset($_FILES["file"]["name"])) upload();
 ?>
 <html>
 <head>
@@ -41,8 +62,8 @@ else //redirect
 			  <button class="btn <?php if($user !== "sudhanshumittal") echo "disabled" ;?>" href="#addProjectModal" data-toggle="modal">Add project</button>
 			  <button class="btn <?php if($user !== "sudhanshumittal") echo "disabled" ;?>" href="#dropProjectModal" data-toggle="modal">Drop project</button>
 			  
-			  <button class="btn <?php if($user !== "sudhanshumittal") echo "disabled" ;?>" href="#addFileModal" data-toggle="modal">Add file</button>
-			  <button class="btn <?php if($user !== "sudhanshumittal") echo "disabled" ;?>" href="#dropFileModal" data-toggle="modal">Drop file</button>
+			  <button class="btn <?php if($user !== "sudhanshumittal" or !isset($_GET['project'])  ) echo "disabled" ;?>" href="#addFileModal" data-toggle="modal">Add file</button>
+			  <button class="btn <?php if($user !== "sudhanshumittal" or !isset($_GET['project'])) echo "disabled" ;?>" href="#dropFileModal" data-toggle="modal">Drop file</button>
 			  <button class="btn" onClick= "download()" >Download</button>
 			</div>
 		</div>
@@ -164,13 +185,17 @@ else //redirect
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 		<h3 id="myModalLabel">Add a new file to this Project</h3>
 	  </div>
+	  <form action="<?php echo $url ;?>" method="post"enctype="multipart/form-data">
 	  <div class="modal-body">
-		<p>One fine body…</p>
+		
+		<input type="file" name="file" id="file" class =""><br>
 	  </div>
 	  <div class="modal-footer">
 		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-		<button class="btn btn-primary">Save changes</button>
+		<button class="btn btn-primary" type="submit">Upload</button>
 	  </div>
+	  </form>
+
 	</div>
 	<!-- drop file form -->
 	<div id="dropFileModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -230,5 +255,44 @@ else //redirect
 
 		echo '</dl>';
 	}
+}
+function upload(){
+$allowedExts = array("c", "cpp", "txt");
+$extension = end(explode(".", $_FILES["file"]["name"]));
+if (true || (($_FILES["file"]["type"] == "text/txt")
+|| ($_FILES["file"]["type"] == "text")
+|| ($_FILES["file"]["type"] == "text")
+|| ($_FILES["file"]["type"] == "text"))
+&& ($_FILES["file"]["size"] < 20000)
+&& in_array($extension, $allowedExts))
+  {
+  if ($_FILES["file"]["error"] > 0)
+    {
+    //return  "Return Code: " . $_FILES["file"]["error"] . "<br>";
+    }
+  else
+    {
+    //return  "Upload: " . $_FILES["file"]["name"] . "<br>";
+    //return  "Type: " . $_FILES["file"]["type"] . "<br>";
+    //return  "Size: " . ($_FILES["file"]["size"] / 1024) . " kB<br>";
+    //return  "Temp file: " . $_FILES["file"]["tmp_name"] . "<br>";
+
+    if (file_exists("upload/" . $_FILES["file"]["name"]))
+      {
+      //return  $_FILES["file"]["name"] . " already exists. ";
+      }
+    else
+      {
+      move_uploaded_file($_FILES["file"]["tmp_name"],
+      "upload/" . $_FILES["file"]["name"]);
+      //return  "Stored in: " . "upload/" . $_FILES["file"]["name"];
+      }
+    }
+  }
+else
+  {
+  //return  "Invalid file";
+  }
+
 }
 ?>
