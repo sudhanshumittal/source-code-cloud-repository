@@ -1,7 +1,37 @@
 <!DOCTYPE html>
 <?php
-if(isset($_GET['user'])) $user =  $_GET['user'];
-else //redirect
+	if(isset($_GET['loginEmail'])) {
+		//login
+		$con = mysql_connect("localhost","root","");
+		if (!$con){
+			die('Could not connect: ' . mysql_error());
+		}
+		else{
+			mysql_select_db("repo", $con);
+			$query = "select * from user where `email` = `".$_GET['loginEmail']."` and  `password` = `".$_GET['loginPassword']."`";
+			$result = mysql_query($query);
+			if(!$result) echo "invalid username or password"; //alert 
+			else foreach($result as $i){
+				//set cookie
+				mysql_close($con);
+				header("Location : ./index.php");
+			}
+		}
+	}
+	else if(isset($_GET['inputEmail'])){
+	//sign into  a new account
+		$con = mysql_connect("localhost","root","");
+		if (!$con){
+			die('Could not connect: ' . mysql_error());
+		}
+		else{
+			mysql_select_db("repo", $con);
+		}	
+	}
+	else{
+		//alert 
+		
+	}
 ?>
 <html>
 <head>
@@ -24,11 +54,8 @@ else //redirect
 			<div class="container">
 			  <a class="brand disabled" href="#">Code Repo</a>
 			  <form class="form-inline pull-right">
-				  <input type="text" class="input" placeholder="Email">
-				  <input type="password" class="input" placeholder="Password">
-				  <label class="checkbox">
-					<input type="checkbox"><span class="label label-inverse">Remember me</span>
-				  </label>
+				  <input type="text" class="input" placeholder="Email" name="loginEmail">
+				  <input type="password" class="input" placeholder="Password" name="loginPassword">
 				  <button type="submit" class="btn">Sign in</button>
 				</form>
 			</div>

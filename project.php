@@ -22,7 +22,7 @@ $url.="&file=".$file;
 //echo "\nuser =".$user;
 //echo "\nproject =".$project;
 //echo "./project.php?".$user."&".$project."&".$file ;
-if(isset($_FILES["file"]["name"])) upload();
+if(isset($_FILES["file"]["name"])) echo upload($user,$project);
 ?>
 <html>
 <head>
@@ -256,7 +256,7 @@ if(isset($_FILES["file"]["name"])) upload();
 		echo '</dl>';
 	}
 }
-function upload(){
+function upload($user, $project){
 $allowedExts = array("c", "cpp", "txt");
 $extension = end(explode(".", $_FILES["file"]["name"]));
 if (true || (($_FILES["file"]["type"] == "text/txt")
@@ -268,24 +268,20 @@ if (true || (($_FILES["file"]["type"] == "text/txt")
   {
   if ($_FILES["file"]["error"] > 0)
     {
-    //return  "Return Code: " . $_FILES["file"]["error"] . "<br>";
+     return  "Return Code: " . $_FILES["file"]["error"] . "<br>";
     }
   else
     {
-    //return  "Upload: " . $_FILES["file"]["name"] . "<br>";
-    //return  "Type: " . $_FILES["file"]["type"] . "<br>";
-    //return  "Size: " . ($_FILES["file"]["size"] / 1024) . " kB<br>";
-    //return  "Temp file: " . $_FILES["file"]["tmp_name"] . "<br>";
-
-    if (file_exists("upload/" . $_FILES["file"]["name"]))
+	if (file_exists("upload/" . $_FILES["file"]["name"]))
       {
-      //return  $_FILES["file"]["name"] . " already exists. ";
+       return  $_FILES["file"]["name"] . " already exists. ";
       }
     else
       {
       move_uploaded_file($_FILES["file"]["tmp_name"],
-      "upload/" . $_FILES["file"]["name"]);
-      //return  "Stored in: " . "upload/" . $_FILES["file"]["name"];
+      "data/".$user."/".$project."/".$_FILES["file"]["name"]);
+       //add file to db as well
+	   return  "file successfully uploaded";
       }
     }
   }
