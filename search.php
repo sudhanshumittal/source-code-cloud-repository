@@ -3,7 +3,7 @@
 if(isset($_GET['searchText'])) $searchText =  $_GET['searchText'];
 else header("Location: ./index.php");
 
-$con=mysql_connect("localhost","root","","repo");
+$con=mysqli_connect("localhost","root","","repo");
 
 // Check connection
 if (!$con)
@@ -53,10 +53,21 @@ if (!$con)
 
 	<div class="container-fluid span12 offset3">
 	   <?php
-	   $results =  search($searchText);
-	   //var_dump($results);
+	    $con=mysqli_connect("localhost","root","","repo");
+		$results=mysqli_query($con,"select distinct u.user_id,u.first_name,p.project_id,p.title,p,description,r.rating 
+							from user u,project p, rates r 
+							where u.project_id=p.project_id
+							and r.project_id=p.project_id
+							and ( p.project_id in (select project_id from tag where tag='.$searchText.')
+							or u.first_name=".$searchText."
+							or u.last_name=".$searchText."
+							or u.email=".$searchText."
+							or p.title=".$searchText."
+							or p.description=".$searchText.")");
+	   
+	   
 	   $count=0;
-	   foreach( $results as $i){
+	   while($i=mysqli_fetch_array($results)){
 	   $count++;
 		   echo '<div class="row-fluid " style = "background-color:#E8EFFD;">
 				<div class="row-fluid ">
@@ -65,12 +76,13 @@ if (!$con)
 				<div class="row-fluid ">
 				<dl class="dl-horizontal"></d>
 				<dt>Rating</dt>
-				<dd>'.$id[4].'</dd>
+				<dd>'.$i[4].'</dd>
 				<dt>Description</dt>
-				<dd>'.$id[5].'</dd>
+				<dd>'.$i[5].'</dd>
 				</div>
 		   </div><hr>';
 	   }
+	   
 	   ?>
 	</div>
 	<script src="assets/js/jquery-1.9.1.min.js"></script>
@@ -87,19 +99,7 @@ if (!$con)
 </body>
 </html>
 <?php
-	function search($searchText){
-	$res=mysql_query('select distinct u.user_id,u.first_name,p.project_id,p.title,p,description,r.rating 
-							from user u,project p, rates r 
-							where u.project_id=p.project_id
-							and r.project_id=p.project_id
-							and ( p.project_id in (select project_id from tag where tag='.$searchText.')
-							or u.first_name='.$searchText.'
-							or u.last_name='.$searchText.'
-							or u.email='.$searchText.'
-							or p.title='.$searchText.'
-							or p.description='.$searchText.')');
-	return $res; 
+	
 		
-		
-	}
+	
 ?>
