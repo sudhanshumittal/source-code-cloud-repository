@@ -1,28 +1,56 @@
 <!DOCTYPE html>
 <?php
-$user = "";
-$project ="";
+session_start();
+if(!isset($_SESSION['user_id'])) header("Location : ./login.php");
+//echo $_SESSION['user_id'];
+$alert = 0;
+$msg="";
+$user_id = -1;
+$project = -1;
+$user_name = "";
+$project_name ="";
 $file ="";
 $url="./project.php";
-if(isset($_GET['user'])){
- $user =  $_GET['user'];
-$url.="?user=".$user;
-
+$con;
+if(isset($_GET['user_id'])){
+	$user_id =  $_GET['user_id'];
+	$url.="?user_id=".$user_id;
+	//create db connection
+	$con = mysql_connect("localhost","root","");
+	if (!$con){
+		die('Could not connect: ' . mysql_error());
+	}
+	else{
+		mysql_select_db("repo", $con);
+		$result = mysql_query("select * from user where user_id = ".$user_id.";");
+		$i = mysql_fetch_assoc($result);
+		$user_name = $i["first_name"]." ".$i['last_name'];
+	}
+	if(isset($_GET['del_project']))
+		delete_project($_GET['del_project']);
+	if(isset($_GET['del_code']))
+		delete_code($_GET['del_code']);
+		
+	if(isset($_GET['project'])){
+		 $project =  $_GET['project'];
+		 $url.="&project=".$project;
+		 $result = mysql_query("select * from project where project_id = ".$project.";");
+		 $i = mysql_fetch_assoc($result);
+		 $project_name = $i["title"];
+		 //echo $project_name;
+	 }
 }
 else {
 }//redirect
-if(isset($_GET['project'])){
- $project =  $_GET['project'];
- $url.="&project=".$project;
- }
+
 if(isset($_GET['file'])){
  $file =  $_GET['file'];
 $url.="&file=".$file;
  }
-//echo "\nuser =".$user;
+//echo "\nuser_id =".$user_id;
 //echo "\nproject =".$project;
-//echo "./project.php?".$user."&".$project."&".$file ;
-if(isset($_FILES["file"]["name"])) echo upload($user,$project);
+//echo "./project.php?".$user_id."&".$project."&".$file ;
+if(isset($_FILES["file"]["name"])) echo upload($user_id,$project);
 ?>
 <html>
 <head>
@@ -53,17 +81,15 @@ if(isset($_FILES["file"]["name"])) echo upload($user,$project);
 			</div>
 		  </div>
 		</div>
-
+	<div id="alert_field"><?php
+	?></div>
 	<div class="container-fluid">
   	   <div class="row-fluid">
 		<div class = "row-fluid">
 		<h1>Sudhanshu Mittal</h1>
 		<div class="btn-group offset6">
-			  <button class="btn <?php if($user !== "sudhanshumittal") echo "disabled" ;?>" href="#addProjectModal" data-toggle="modal">Add project</button>
-			  <button class="btn <?php if($user !== "sudhanshumittal") echo "disabled" ;?>" href="#dropProjectModal" data-toggle="modal">Drop project</button>
-			  
-			  <button class="btn <?php if($user !== "sudhanshumittal" or !isset($_GET['project'])  ) echo "disabled" ;?>" href="#addFileModal" data-toggle="modal">Add file</button>
-			  <button class="btn <?php if($user !== "sudhanshumittal" or !isset($_GET['project'])) echo "disabled" ;?>" href="#dropFileModal" data-toggle="modal">Drop file</button>
+			  <button class="btn <?php if($user_id !== $_SESSION['user_id']) echo "disabled" ;?>" href="#addProjectModal" data-toggle="modal">Add project</button>
+			  <button class="btn <?php if($user_id !== $_SESSION['user_id'] or !isset($_GET['project'])  ) echo "disabled" ;?>" href="#addFileModal" data-toggle="modal">Add file</button>
 			  <button class="btn" onClick= "download()" >Download</button>
 			</div>
 		</div>
@@ -74,18 +100,18 @@ if(isset($_FILES["file"]["name"])) echo upload($user,$project);
 			<div class="row-fluid" >
 				<ul class="breadcrumb" style = "background-color:#E8EFFD;">
 				<?php 
-					if(isset($_GET['user'])){ //user page
-						$user = $_GET['user'];
+					if(isset($_GET['user_id'])){ //user page
+						$user_id = $_GET['user_id'];
 						if(!isset($_GET['project'])){
-							echo '<li class="active">'.$user.'</li>';
+							echo '<li class="active">'.$user_name.'</li>';
 						}
 						else{
-							echo '<li><a href="?user=sudhanshumittal">'.$user.'</a> <span class="divider">/</span></li>';
+							echo '<li><a href="?user_id='.$user_id.'">'.$user_name.'</a> <span class="divider">/</span></li>';
 							$project = $_GET['project'];
 								if(!isset($_GET['file']))
-								echo '<li class="active">'.$project.'</li>';
+								echo '<li class="active">'.$project_name.'</li>';
 								else{
-									echo '<li><a href="?user=sudhanshumittal&project='.$project.'">'.$project.'</a> <span class="divider">/</span></li>';
+									echo '<li><a href="?user_id='.$user_id.'&project='.$project.'">'.$project_name.'</a> <span class="divider">/</span></li>';
 									echo '<li class="active">'.$_GET['file'].'</li>';	
 								}
 						}
@@ -93,44 +119,53 @@ if(isset($_FILES["file"]["name"])) echo upload($user,$project);
 				?>
 				</ul>
 				<?php
-				if(isset($_GET['file'])){
-					$user = $_GET['user'];
+				if(isset($_GET['file'])){	//file page
+					$user_id = $_GET['user_id'];
 					$project = $_GET['project'];
 					$file = $_GET['file'];
 			
 					echo '<pre class="prettyprint linenums languague-cpp" >';
-					$code = file_get_contents('./data/'.$user.'/'.$project.'/'.$file);
+					$code = file_get_contents('./data/'.$user_id.'/'.$project.'/'.$file);
 					echo $code;
 					echo '</pre>';
 				}
-				else if(isset($_GET['project'])){
+				else if(isset($_GET['project'])){	//project page
 					echo '<div class="container" >';
 					echo '<h5>Files</h5>';
 					
-					$user = $_GET['user'];
+					$user_id = $_GET['user_id'];
 					$project = $_GET['project'];
-					if ($handle = opendir('./data/'.$user.'/'.$project.'/')) {
-					//echo '<ul>';
-						while (false !== ($entry = readdir($handle))) {
-							if( $entry =='.' || $entry =='..' ) continue;
-							echo '<a href="?user='.$user.'&project='.$project.'&file='.$entry.'">'.$entry.'</a> <span class="divider">/</span><br>';
+					$query = 'select c.code_id, c.title from code c, contains co where c.code_id = co.code_id and co.project_id = '.$project.';';
+					$result = mysql_query( $query);
+					if (!$result) {
+							die('Invalid query: ' . mysql_error());
 						}
-						echo'</div><hr>';
-						closedir($handle);
-						}
-						about(0);
+					while($i = mysql_fetch_assoc($result)){
+						if($user_id == $_SESSION['user_id']) 
+							echo '<button type="button" class="btn close" href="#dropFileModal" data-toggle="modal" onClick="drop_code('.$i["code_id"].',\''.$i["title"].'\')" >×</button>';
+						echo '<a href="?user_id='.$user_id.'&project='.$project.'&file='.$i['code_id'].'">'.$i["title"].'</a> <span class="divider"></span><br>';
+						
+					}
+					echo'</div><hr>';
+						
+					about(0);
 				}
-				else if(isset($_GET['user'])){ //user page
-							$user = $_GET['user'];
-							if ($handle = opendir('./data/'.$user.'/')) {
+				else if(isset($_GET['user_id'])){ //user page
+							$user_id = $_GET['user_id'];
+							//$user_id = 1;
+							$query = 'select p.project_id, p.title from project p,shares s where p.project_id = s.project_id and s.user_id = '.$user_id.';';
 							echo '<div class="container" >';
 							echo '<h5>Projects</h5>';
-							while (false !== ($entry = readdir($handle))) {
-								if( $entry =='.' || $entry =='..' ) continue;
-								echo '<a href="?user='.$user.'&project='.$entry.'">'.$entry.'</a> <span class="divider">/</span><br>';
+								
+							$result = mysql_query($query);
+							if (!$result) {
+								die('Invalid query: ' . mysql_error());
 							}
-							echo'</div><hr>';
-							 closedir($handle);
+							while($i = mysql_fetch_assoc($result)){
+								if($user_id == $_SESSION['user_id']) 
+									echo '<button type="button" class="btn close" href="#dropProjectModal" data-toggle="modal" onClick="drop_project('.$i["project_id"].',\''.$i["title"].'\')" >×</button>';
+								echo '<a href="?user_id='.$user_id.'&project='.$i["project_id"].'">'.$i["title"].'</a> <span class="divider"></span><br>';
+								echo'</div><hr>';
 							}
 							echo '<div class="container-fluid">';
 								about(1);
@@ -169,14 +204,15 @@ if(isset($_FILES["file"]["name"])) echo upload($user,$project);
 	<div id="dropProjectModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	  <div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-		<h3 id="myModalLabel">Drop the following Projects</h3>
+		<h3 id="myModalLabel">Drop Project</h3>
 	  </div>
 	  <div class="modal-body">
-		<p>One fine body…</p>
+		<p id ="delete_project_para"></p>
+		<p>Are you sure you want to continue?</p>
 	  </div>
 	  <div class="modal-footer">
 		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-		<button class="btn btn-primary">Save changes</button>
+		<a class="btn btn-primary" id="delete_project" >Continue</a>
 	  </div>
 	</div>
 	<!-- add file form -->
@@ -204,11 +240,12 @@ if(isset($_FILES["file"]["name"])) echo upload($user,$project);
 		<h3 id="myModalLabel">Drop files from this Project</h3>
 	  </div>
 	  <div class="modal-body">
-		<p>One fine body…</p>
+		<p id ="delete_code_para">asjdhkh</p>
+		<p>Are you sure you want to continue?</p>
 	  </div>
 	  <div class="modal-footer">
 		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-		<button class="btn btn-primary">Save changes</button>
+		<a class="btn btn-primary" id="delete_code" >Continue</a>
 	  </div>
 	</div>
 	
@@ -256,32 +293,28 @@ if(isset($_FILES["file"]["name"])) echo upload($user,$project);
 		echo '</dl>';
 	}
 }
-function upload($user, $project){
-$allowedExts = array("c", "cpp", "txt");
+function upload($user_id, $project){
+$allowedExts = array("c", "cpp", "txt","php","java");
 $extension = end(explode(".", $_FILES["file"]["name"]));
-if (true || (($_FILES["file"]["type"] == "text/txt")
-|| ($_FILES["file"]["type"] == "text")
-|| ($_FILES["file"]["type"] == "text")
-|| ($_FILES["file"]["type"] == "text"))
-&& ($_FILES["file"]["size"] < 20000)
-&& in_array($extension, $allowedExts))
+if (in_array($extension, $allowedExts))
   {
   if ($_FILES["file"]["error"] > 0)
     {
-     return  "Return Code: " . $_FILES["file"]["error"] . "<br>";
+     alert_error( $_FILES["file"]["error"] . "<br>");
     }
   else
     {
-	if (file_exists("upload/" . $_FILES["file"]["name"]))
+	if (file_exists("data/".$user_id."/".$project."/".$_FILES["file"]["name"]))
       {
-       return  $_FILES["file"]["name"] . " already exists. ";
+       alert_error("A file already exists with the given name.");
       }
     else
       {
       move_uploaded_file($_FILES["file"]["tmp_name"],
-      "data/".$user."/".$project."/".$_FILES["file"]["name"]);
+      "data/".$user_id."/".$project."/".$_FILES["file"]["name"]);
        //add file to db as well
-	   return  "file successfully uploaded";
+	   
+	   alert_success("file successfully uploaded !");
       }
     }
   }
@@ -291,4 +324,57 @@ else
   }
 
 }
+function alert_success($msg){
+	//if($alert==1){
+		echo '<div class="alert"><button type="button" class="close" data-dismiss="alert">&times;</button><strong>'.$msg.'</strong></div>';
+//	}
+	
+}
+function alert_error($msg){
+	//if($alert==1){
+		echo '<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">&times;</button><strong>Oh snap ! '.$msg.'</strong></div>';
+//	}
+	
+}
+function delete_project($pro_id){
+	/*drop all codes in the project*/
+		$query = 'select code_id from contains where project_id='.$pro_id.';';		
+		$result = mysql_query($query);
+		while($i = mysql_fetch_assoc($result)){
+				$query = 'delete from code where code_id='.$i["code_id"].';';
+				$result = mysql_query($query);			
+		}
+		/* drop project */
+		$query = 'delete from project where project_id='.$pro_id.';';
+		$result = mysql_query($query);
+		if (!$result) {
+			die('Invalid query: ' . mysql_error());
+		}
+		/*delete folder not done yet*/
+		
+}
+function delete_code($id){
+
+		/* drop file */
+		$query = 'delete from code where code_id='.$id.';';
+		$result = mysql_query($query);
+		if (!$result) {
+			die('Invalid query: ' . mysql_error());
+		}
+		/*delete folder not done yet*/
+		
+}
+mysql_close($con);
 ?>
+ <script>
+ function drop_project(pro, title){
+	//alert(title);
+	document.getElementById("delete_project").href = "./project.php?user_id="+<?php echo $user_id; ?>+"&del_project="+pro;
+	document.getElementById("delete_project_para").innerHTML = "You are about to delete the project named - <strong>"+title+"</strong>";
+ } 
+ function drop_code(code_id, title){
+	//alert(code_id+" "+title);
+	document.getElementById("delete_code").href = "./project.php?user_id="+<?php echo $user_id; ?>+"&project_id="+<?php echo $project; ?>+"&del_code="+code_id;
+	document.getElementById("delete_code_para").innerHTML = "You are about to delete the file named - <strong>"+title+"</strong>";
+ }
+ </script>
