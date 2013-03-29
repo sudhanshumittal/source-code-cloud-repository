@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <?php
+include './include.php';
+session_start();
+if(!in_session()) destroy_session();
+
 if(isset($_GET['searchText'])) $searchText =  $_GET['searchText'];
 else header("Location: ./index.php");
 ?>
@@ -29,6 +33,7 @@ else header("Location: ./index.php");
 				  <li><a href="#about">Profile</a></li>
 				  <li><a href="#about">About</a></li>
 				  <li><a href="#contact">Contact</a></li>
+				  <li class="pull right"><a href ="./signout.php">Sign out</a></li>
 				</ul>
 			  </div><!--/.nav-collapse -->
 				<form class="navbar-search pull-right" method ="GET" action = "search.php">
