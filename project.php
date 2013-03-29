@@ -3,7 +3,7 @@
 session_start();
 if(!isset($_SESSION['user_id'])) header("Location : ./login.php");
 //echo $_SESSION['user_id'];
-$alert = 0;
+//$alert = 0;
 $msg="";
 $user_id = -1;
 $project = -1;
@@ -39,8 +39,20 @@ if(isset($_GET['user_id'])){
 		 $project_name = $i["title"];
 		 //echo $project_name;
 	 }
+	 if(isset($_REQUEST['comment'])){
+		//echo $_REQUEST['comment'];
+		$secs = time();
+		$time= date('Y-m-d')." ".($secs / 3600 % 24 ).":".($secs / 60 % 60).":".($secs % 60);
+		$query = "insert into comments values(".$_SESSION['user_id'].",".$_GET['project'].",'".$_REQUEST['comment']."','".$time."');";
+		//echo $query;
+		$result = mysql_query($query);
+		if (!$result) {
+			die('Invalid query: ' . mysql_error());
+		}
+	 }
 }
 else {
+	header("Location: ./index.php");
 }//redirect
 
 if(isset($_GET['file'])){
@@ -260,15 +272,18 @@ if(isset($_FILES["file"]["name"])) echo upload($user_id,$project);
 		echo '<h4>Comments</h4><hr>';
 		//echo '<div class="media">
 		echo '<dl class = "">';
-		echo '<dt><small><textarea rows="3" placeholder="Say something..." class= "span12"></textarea></small><dt>';
-		echo '<button class ="btn btn-primary">comment</button><hr>';
+		echo '<form action="project.php?user_id='.$_GET['user_id'].'&project='.$_GET['project'].'" method = "POST" >
+				<dt><small><textarea rows="3" placeholder="Say something..." class= "span12" name="comment"></textarea></small><dt>';
+		echo '<dd><button class ="btn btn-primary">comment</button></dd></form><hr>';
 		
-		
-		for( $i=0; $i<3; $i++){
+		$query = 'select * from user u,comments c where c.project_id = '.$_GET['project'].' and u.user_id = c.user_id order by c.comment_date';
+		//echo $query;
+		$result = mysql_query($query);
+		while($i = mysql_fetch_assoc($result)){
 			//echo '<div class="row span12 pull-right">';
 			//echo '<div class="row span12 pull-right">
-			echo '<dt><a href="#">sudhanshu mittal</a></dt>
-			<dd><small>commments...</small><dd><hr>';
+			echo '<dt><a href="./project.php?user_id='.$i["user_id"].'">'.$i["first_name"].' '.$i["last_name"] .'</a> </dt>
+			<dd><small><p class="muted"> on '.$i["comment_date"].'</p>'.$i["comment"].'</small><dd><hr>';
 			//</div>';
 		}
 		echo '</dl>';
@@ -364,7 +379,7 @@ function delete_code($id){
 		/*delete folder not done yet*/
 		
 }
-mysql_close($con);
+if($con) mysql_close($con);
 ?>
  <script>
  function drop_project(pro, title){

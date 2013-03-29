@@ -1,0 +1,8 @@
+####derive comments for projet with id  = xyz
+select u.first_name, u.last_name, c.comment, c.comment_date  from user u, comments c, project p where p.project_id = xyz and c.project_id = p.project_id and u.user_id = c.user_id;   
+
+####all projects for a user id xyz
+select p.project_id, p.title from project p,shares s where p.project_id = s.project_id and s.user_id = 10;
+
+### delete project with projet id p
+delete from project where project_id = 2;
