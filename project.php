@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <?php
+include './include.php';
 session_start();
-if(!isset($_SESSION['user_id'])) header("Location : ./login.php");
+if(!in_session()) destroy_session();
+
 //echo $_SESSION['user_id'];
 //$alert = 0;
 $msg="";
@@ -70,10 +72,18 @@ if(isset($_FILES["file"]["name"])) echo upload($user_id,$project);
     <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
 	<link rel = "stylesheet" href="assets/css/bootstrap.min.css">
 	<link href="assets/css/prettify.css" type="text/css" rel="stylesheet" />
+	<style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+		padding-left: 60px;
+		padding-right: 60px;
+	  }
+    </style>
 	<title>IITG Code Repository</title>
 </head>
 <body onload="prettyPrint()">
-	<div class="navbar navbar-inverse">
+	<div class="navbar navbar-inverse navbar-fixed-top">
 		  <div class="navbar-inner">
 			<div class="container">
 			  <a class="brand" href="#">Code Repo</a>
@@ -83,6 +93,7 @@ if(isset($_FILES["file"]["name"])) echo upload($user_id,$project);
 				  <li><a href="#about">Profile</a></li>
 				  <li><a href="#about">About</a></li>
 				  <li><a href="#contact">Contact</a></li>
+				  <li class="pull right"><a href ="./signout.php">Sign out</a></li>
 				</ul>
 			  </div><!--/.nav-collapse -->
 				<form class="navbar-search pull-right" method ="GET" action = "search.php">
@@ -188,7 +199,7 @@ if(isset($_FILES["file"]["name"])) echo upload($user_id,$project);
 
 			</div>		
 			</div>
-		  <!--Body content-->
+		  <!--comments content-->
 			<div class="span3">
 			  <?php 
 			   if( isset($_GET['project'])) comments();

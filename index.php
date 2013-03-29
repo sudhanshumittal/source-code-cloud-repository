@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <?php
-if(isset($_GET['user'])) $user =  $_GET['user'];
-else //redirect
+include './include.php';
+session_start();
+if(!in_session()) destroy_session();
+
 ?>
 <html>
 <head>
@@ -29,6 +31,7 @@ else //redirect
 				  <li><a href="#about">Profile</a></li>
 				  <li><a href="#about">About</a></li>
 				  <li><a href="#contact">Contact</a></li>
+				  <li class="pull right"><a href ="./signout.php">Sign out</a></li>
 				</ul>
 			  </div><!--/.nav-collapse -->
 				<form class="navbar-search pull-right" method ="GET" action = "search.php">
