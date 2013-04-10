@@ -16,6 +16,7 @@ create table code (
 	description varchar(100),
 	url varchar(50),
 	title varchar(50),
+	extension varchar(10),
 	last_updated datetime,
 	update_count integer,
 	primary key(code_id)
@@ -26,6 +27,7 @@ create table project(
 	title varchar(20),
 	description varchar(100),
 	url varchar(20),
+	rating smallint,
 	primary key(project_id)
 );
 create table tag(

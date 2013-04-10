@@ -41,6 +41,15 @@ if(isset($_GET['user_id'])){
 		 $project_name = $i["title"];
 		 //echo $project_name;
 	 }
+	 if(isset($_GET['file'])){
+		$project =  $_GET['project'];
+		$query = "select * from code where code_id = ".$_GET['file'].";";
+		$result = mysql_query($query );
+		//echo 	$query;	
+		$i = mysql_fetch_assoc($result);
+		 $code_name = $i["title"];
+		 $extension = $i["extension"]; 
+	 }
 	 if(isset($_REQUEST['comment'])){
 		//echo $_REQUEST['comment'];
 		$secs = time();
@@ -65,6 +74,7 @@ $url.="&file=".$file;
 //echo "\nproject =".$project;
 //echo "./project.php?".$user_id."&".$project."&".$file ;
 if(isset($_FILES["file"]["name"])) echo upload($user_id,$project);
+if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_REQUEST['project_title'],$_REQUEST['language'], $_REQUEST['description'] );
 ?>
 <html>
 <head>
@@ -83,37 +93,22 @@ if(isset($_FILES["file"]["name"])) echo upload($user_id,$project);
 	<title>IITG Code Repository</title>
 </head>
 <body onload="prettyPrint()">
-	<div class="navbar navbar-inverse navbar-fixed-top">
-		  <div class="navbar-inner">
-			<div class="container">
-			  <a class="brand" href="#">Code Repo</a>
-			  <div class="nav-collapse collapse">
-				<ul class="nav">
-				  <li class="active"><a href="#"> Home</a></li>
-				  <li><a href="#about">Profile</a></li>
-				  <li><a href="#about">About</a></li>
-				  <li><a href="#contact">Contact</a></li>
-				  <li class="pull right"><a href ="./signout.php">Sign out</a></li>
-				</ul>
-			  </div><!--/.nav-collapse -->
-				<form class="navbar-search pull-right" method ="GET" action = "search.php">
-					<div class="input-prepend">					  
-					  <input class="search-query span4" id="inputIcon" type="text" name ="searchText" placeholder="Search someone or something…">
-					</div>				  
-				</form>
-			</div>
-		  </div>
-		</div>
+	<?php
+	menu('project');
+	?>
 	<div id="alert_field"><?php
 	?></div>
 	<div class="container-fluid">
   	   <div class="row-fluid">
 		<div class = "row-fluid">
-		<h1>Sudhanshu Mittal</h1>
+		<h1><?php echo $user_name ;?></h1>
 		<div class="btn-group offset6">
 			  <button class="btn <?php if($user_id !== $_SESSION['user_id']) echo "disabled" ;?>" href="#addProjectModal" data-toggle="modal">Add project</button>
 			  <button class="btn <?php if($user_id !== $_SESSION['user_id'] or !isset($_GET['project'])  ) echo "disabled" ;?>" href="#addFileModal" data-toggle="modal">Add file</button>
-			  <button class="btn" onClick= "download()" >Download</button>
+			  <a class="btn <?php if($user_id !== $_SESSION['user_id']) echo "disabled" ;?>" 
+			  href="<?php if(isset($_GET['project'])) echo './download.php?project_id='.$_GET['project']; 
+						  if(isset($_GET['file'])) echo "&file_id=".$_GET['file'] ;
+			  ?>" >Download</a>
 			</div>
 		</div>
 		<hr>
@@ -135,7 +130,7 @@ if(isset($_FILES["file"]["name"])) echo upload($user_id,$project);
 								echo '<li class="active">'.$project_name.'</li>';
 								else{
 									echo '<li><a href="?user_id='.$user_id.'&project='.$project.'">'.$project_name.'</a> <span class="divider">/</span></li>';
-									echo '<li class="active">'.$_GET['file'].'</li>';	
+									echo '<li class="active">'.$code_name.'</li>';	
 								}
 						}
 					}
@@ -147,8 +142,8 @@ if(isset($_FILES["file"]["name"])) echo upload($user_id,$project);
 					$project = $_GET['project'];
 					$file = $_GET['file'];
 			
-					echo '<pre class="prettyprint linenums languague-cpp" >';
-					$code = file_get_contents('./data/'.$user_id.'/'.$project.'/'.$file);
+					echo '<pre class="prettyprint linenums languague-'.$extension.'" >';
+					$code = file_get_contents('./data/'.$user_id.'/'.$project.'/'.$file.'.'.$extension);
 					echo $code;
 					echo '</pre>';
 				}
@@ -165,8 +160,8 @@ if(isset($_FILES["file"]["name"])) echo upload($user_id,$project);
 						}
 					while($i = mysql_fetch_assoc($result)){
 						if($user_id == $_SESSION['user_id']) 
-							echo '<button type="button" class="btn close" href="#dropFileModal" data-toggle="modal" onClick="drop_code('.$i["code_id"].',\''.$i["title"].'\')" >×</button>';
-						echo '<a href="?user_id='.$user_id.'&project='.$project.'&file='.$i['code_id'].'">'.$i["title"].'</a> <span class="divider"></span><br>';
+							echo '<div class = "span6"><button type="button" class="btn close" href="#dropFileModal" data-toggle="modal" onClick="drop_code('.$i["code_id"].',\''.$i["title"].'\')" >×</button>';
+						echo '<a href="?user_id='.$user_id.'&project='.$project.'&file='.$i['code_id'].'">'.$i["title"].'</a> <br></div>';
 						
 					}
 					echo'</div><hr>';
@@ -186,8 +181,8 @@ if(isset($_FILES["file"]["name"])) echo upload($user_id,$project);
 							}
 							while($i = mysql_fetch_assoc($result)){
 								if($user_id == $_SESSION['user_id']) 
-									echo '<button type="button" class="btn close" href="#dropProjectModal" data-toggle="modal" onClick="drop_project('.$i["project_id"].',\''.$i["title"].'\')" >×</button>';
-								echo '<a href="?user_id='.$user_id.'&project='.$i["project_id"].'">'.$i["title"].'</a> <span class="divider"></span><br>';
+									echo '<div class="span6"><button type="button" class="btn close" href="#dropProjectModal" data-toggle="modal" onClick="drop_project('.$i["project_id"].',\''.$i["title"].'\')" >×</button>';
+								echo '<a href="?user_id='.$user_id.'&project='.$i["project_id"].'">'.$i["title"].'</a><br></div>';
 								echo'</div><hr>';
 							}
 							echo '<div class="container-fluid">';
@@ -215,15 +210,30 @@ if(isset($_FILES["file"]["name"])) echo upload($user_id,$project);
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 		<h3 id="myModalLabel">Add a new Project</h3>
 	  </div>
+	  <form method ="POST" action ="./project.php?user_id=<?php echo $user_id;?> ">
 	  <div class="modal-body">
-		<p>One fine body…</p>
+		<table>
+			<tr>
+				<td>Project title</td>
+				<td><input type="text" name ="project_title" placeholder ="project title" /></td>
+			</tr>
+			<tr>
+				<td>Language</td>
+				<td><input type="text" name ="language" placeholder ="project language" /></td>
+			</tr>
+			<tr>
+				<td>Description</td>
+				<td><input type="text" name ="description" placeholder ="project description" /></td>
+			</tr>
+		</table>
 	  </div>
 	  <div class="modal-footer">
 		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-		<button class="btn btn-primary">Save changes</button>
+		<button class="btn btn-primary" type ="submit" >Save changes</button>
 	  </div>
+	  </form>
 	</div>
-	<!-- drop project form -->
+	<!-- drop project form 
 	<div id="dropProjectModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	  <div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -237,14 +247,14 @@ if(isset($_FILES["file"]["name"])) echo upload($user_id,$project);
 		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 		<a class="btn btn-primary" id="delete_project" >Continue</a>
 	  </div>
-	</div>
+	</div>-->
 	<!-- add file form -->
 	<div id="addFileModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	  <div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 		<h3 id="myModalLabel">Add a new file to this Project</h3>
 	  </div>
-	  <form action="<?php echo $url ;?>" method="post"enctype="multipart/form-data">
+	  <form action="<?php echo $url ;?>" method="post" enctype="multipart/form-data">
 	  <div class="modal-body">
 		
 		<input type="file" name="file" id="file" class =""><br>
@@ -287,7 +297,7 @@ if(isset($_FILES["file"]["name"])) echo upload($user_id,$project);
 				<dt><small><textarea rows="3" placeholder="Say something..." class= "span12" name="comment"></textarea></small><dt>';
 		echo '<dd><button class ="btn btn-primary">comment</button></dd></form><hr>';
 		
-		$query = 'select * from user u,comments c where c.project_id = '.$_GET['project'].' and u.user_id = c.user_id order by c.comment_date';
+		$query = 'select * from user u,comments c where c.project_id = '.$_GET['project'].' and u.user_id = c.user_id order by c.comment_date ';
 		//echo $query;
 		$result = mysql_query($query);
 		while($i = mysql_fetch_assoc($result)){
@@ -300,24 +310,54 @@ if(isset($_FILES["file"]["name"])) echo upload($user_id,$project);
 		echo '</dl>';
 	}
 	function about($type){
-	if($type==1){
-		echo '<dl class = "dl-horizontal">';
-		echo	'<dt>Skill rating</dt>
-			<dd><small>8/10</small><dd>';
-		echo	'<dt>About</dt>
-			<dd><small>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</small><dd>';
-
-		echo '</dl>';	
+	 
+	if($type==1){ /*about some user*/
+		$query = "select * from user where user_id = ".$_GET['user_id']." ;";
+		$result = mysql_query($query);	
+		while($i = mysql_fetch_assoc($result)){
+			echo '<dl class = "dl-horizontal">';
+			echo	'<dt>Skill Rating</dt>
+				<dd><small>'.$i["skill_level"].'/10</small><dd>';
+			echo	'<dt>Designation</dt>
+				<dd><small>'.$i["designation"].'</small><dd>';
+			echo '</dl>';	
 		}
-	else{
-		echo '<dl class = "dl-horizontal">';
-		echo	'<dt>Project rating</dt>
-			<dd><small>8/10</small><dd>';
-		echo	'<dt>About</dt>
-			<dd><small>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</small><dd>';
-
-		echo '</dl>';
 	}
+	else{ /*about some project*/
+		{
+		$query = "select * from project where project_id = ".$_GET['project']." ;";
+		$result = mysql_query($query);	
+		while($i = mysql_fetch_assoc($result)){
+			echo '<dl class = "dl-horizontal">';
+			echo	'<dt>Project rating</dt>
+				<dd><small>'.$i["rating"].'/10</small><dd>';
+			echo	'<dt>Language</dt>
+				<dd><small>'.$i["langauge"].'</small><dd>';
+			echo	'<dt>About</dt>
+				<dd><small>'.$i["description"].'</small><dd>';
+			echo '</dl>';
+		}
+		}
+	}
+}
+function create_project($user_id, $project,$title, $language, $description){
+	/*search if the title already exisits for a user*/
+	/*if not create a project in db*/
+	$query = 'insert into project(title, description, url , langauge ) 
+	values ("'.$title.'", "'.$description.'", "data/'.$user_id.'/ ", "'.$language.'")';
+	//echo $query;
+	mysql_query($query);
+	$query  = "select max(project_id) as max_pro from project" ;
+	//echo '<br>'.$query;
+	$result = mysql_query($query);
+	$i = mysql_fetch_assoc($result);
+	$secs = time();
+		$time= date('Y-m-d')." ".($secs / 3600 % 24 ).":".($secs / 60 % 60).":".($secs % 60);
+	$query = 'insert into shares values('.$_SESSION["user_id"].','.$i["max_pro"].',"'.$time.'");';
+	//echo '<br>'.$query;
+	$result = mysql_query($query);
+	/*cretae a folder for this project in folder data/user_id*/
+	mkdir('data/'.$_SESSION['user_id'].'/'.$i['max_pro']);
 }
 function upload($user_id, $project){
 $allowedExts = array("c", "cpp", "txt","php","java");
@@ -336,12 +376,29 @@ if (in_array($extension, $allowedExts))
       }
     else
       {
-      move_uploaded_file($_FILES["file"]["tmp_name"],
-      "data/".$user_id."/".$project."/".$_FILES["file"]["name"]);
-       //add file to db as well
-	   
+		
+      //add file to db 
+	  echo $extension;
+	   $query  = 'insert into code(	description,	url ,	title, extension	 ) 
+	   values("","data/'.$user_id.'/'.$project.'/","'.$_FILES["file"]["name"].'","'.$extension.'" )';
+	  // echo $query;
+	   mysql_query($query);
+	   $query  = 'select max(code_id) as max_id from code';
+	  // echo '<br>'.$query;
+	   $result = mysql_query($query);
+	   $i = mysql_fetch_assoc($result);
+	   $query = 'insert into contains values('.$project.','.$i['max_id'].')' ;
+	  // echo '<br>'.$query;
+	   $result = mysql_query($query);
 	   alert_success("file successfully uploaded !");
-      }
+      /*upload file into folder*/
+	  //echo "./data/".$_SESSION['user_id']."/".$project."/";
+	  
+	  move_uploaded_file($_FILES["file"]["tmp_name"],
+      "./data/".$_SESSION['user_id']."/".$project."/".$i['max_id'].".".$extension	);
+      
+	  
+	  }
     }
   }
 else

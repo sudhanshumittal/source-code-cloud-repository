@@ -56,36 +56,51 @@ if (!$con)
 		  </div>
 		</div>
 
-	<div class="container-fluid span12 offset3">
+	<div class="container-fluid span10 offset2">
 	   <?php
-	    $con=mysqli_connect("localhost","root","","repo");
-		$results=mysqli_query($con,"select distinct u.user_id,u.first_name,p.project_id,p.title,p,description,r.rating 
-							from user u,project p, rates r 
-							where u.project_id=p.project_id
-							and r.project_id=p.project_id
-							and ( p.project_id in (select project_id from tag where tag='.$searchText.')
-							or u.first_name=".$searchText."
-							or u.last_name=".$searchText."
-							or u.email=".$searchText."
-							or p.title=".$searchText."
-							or p.description=".$searchText.")");
-	   
-	   
 	   $count=0;
-	   while($i=mysqli_fetch_array($results)){
-	   $count++;
-		   echo '<div class="row-fluid " style = "background-color:#E8EFFD;">
-				<div class="row-fluid ">
-				<h5><span class="badge">'.$count.'</span><a href="project.php?user='.$i[0].'">'.$i[1].'</a> / <a href ="project.php?user='.$i[0].'&project='.$i[2].'">'.$i[3].'</a></h5>
-				</div>
-				<div class="row-fluid ">
-				<dl class="dl-horizontal"></d>
-				<dt>Rating</dt>
-				<dd>'.$i[4].'</dd>
-				<dt>Description</dt>
-				<dd>'.$i[5].'</dd>
-				</div>
-		   </div><hr>';
+	   $con=mysql_connect("localhost","root","");
+	   mysql_select_db("repo");
+			
+	   $searchText = explode(" ",$searchText);
+	   $projects = Array();
+	   foreach( $searchText as $word){
+			if ($word =="" or $word ==" ") continue;
+			$word = "REGEXP '.*".$word.".*'";
+			$query = "select distinct u.user_id,u.first_name,u.last_name, p.project_id,p.title,p.description
+								from user u,project p, shares s
+								where u.user_id=s.project_id
+								and s.project_id=p.project_id
+								and ( p.project_id in (select project_id from tag where tag_name ".$word.")
+								or u.first_name	 ".$word."
+								or u.last_name ".$word."
+								or u.email  ".$word."
+								or p.title  ".$word."
+								or p.description  ".$word.");";
+			//echo $query ;
+			$results = mysql_query($query);
+			if (!$results) {
+								die('Invalid query: ' . mysql_error());
+			}
+		   
+		   while($i=mysql_fetch_array($results)){
+		   	if(!isset($projects[$i["project_id"]])){
+			$projects[$i["project_id"]] =1;
+			$count++;
+			   echo '<div class="row-fluid well" style = "background-color:#E8EFFD;">
+					<h3><a href="project.php?user_id='.$i["user_id"].'">'.$i["first_name"]." ".$i["last_name"].
+					'</a> / <a href ="project.php?user_id='.$i["user_id"].'&project='.$i["project_id"].'">'.$i["title"].'</a></h3>
+					<dl class="dl-horizontal"></d>
+					<dt>Description</dt>
+					<dd>'.$i["description"].'</dd>
+								   </div><hr>';
+		    }
+		   }
+		}
+		mysql_close($con);
+	   if($count ==0){
+		/*no results were displayed*/
+		
 	   }
 	   
 	   ?>
@@ -93,18 +108,7 @@ if (!$con)
 	<script src="assets/js/jquery-1.9.1.min.js"></script>
 	<script src="assets/js/bootstrap.min.js"></script>
 	<script type="text/javascript">
-	function download(){
-		alert("hi");
-	};
-	$(document).ready(function() { 
-	//alert('hi');
-    $('#pageContent').load('input.cpp');
-	}); 
+	
 	</script>
 </body>
 </html>
-<?php
-	
-		
-	
-?>

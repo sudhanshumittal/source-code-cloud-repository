@@ -52,11 +52,12 @@
 			.$_REQUEST['designation'].',"'
 			.$_REQUEST['inputEmail'].'","'
 			.$_REQUEST['inputPassword'].'")';
-			echo $query;
+			//	echo $query."<br>";
 			$result = mysql_query($query);
 			if($result==1){
 				session_start();
-				$query = "select user_id,first_name, last_name from user where email=".$_REQUEST['loginEmail'].";";
+				$query = 'select user_id,first_name, last_name from user where email="'.$_REQUEST['inputEmail'].'";';
+				//echo $query;
 				$result = mysql_query($query);
 				while($i = mysql_fetch_assoc($result)){
 					$_SESSION['user_id'] = $i['user_id'];
@@ -64,6 +65,8 @@
 					$_SESSION['last_name'] = $i['last_name'];
 				}				
 				mysql_close($con);
+				/*create a folder for the user */
+				mkdir('data/'.$_SESSION['user_id']);
 				header("Location: ./index.php");
 			}
 			else{

@@ -1,0 +1,4 @@
+for using your freedom the proxy setting of torrent client shud b
+
+SOCKS 5
+port no.  1080

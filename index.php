@@ -21,31 +21,13 @@ if(!in_session()) destroy_session();
 	<title>IITG Code Repository</title>
 </head>
 <body >
-	<div class="navbar navbar-inverse navbar-fixed-top">
-		  <div class="navbar-inner">
-			<div class="container">
-			  <a class="brand" href="#">Code Repo</a>
-			  <div class="nav-collapse collapse">
-				<ul class="nav">
-				  <li class="active"><a href="#"> Home</a></li>
-				  <li><a href="#about">Profile</a></li>
-				  <li><a href="#about">About</a></li>
-				  <li><a href="#contact">Contact</a></li>
-				  <li class="pull right"><a href ="./signout.php">Sign out</a></li>
-				</ul>
-			  </div><!--/.nav-collapse -->
-				<form class="navbar-search pull-right" method ="GET" action = "search.php">
-					<div class="input-prepend">					  
-					  <input class="search-query span4" id="inputIcon" type="text" name ="searchText" placeholder="Search someone or something…">
-					</div>				  
-				</form>
-			</div>
-		  </div>
-		</div>
+	<?php
+		menu('index');
+	?>
 
  <div class="hero-unit">
-        <h1>Hello, world!</h1>
-        <p>This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
+        <h1>Wlcome to IITG Source Code Repository!</h1>
+		<p>We provide a platform to share your code with other programming enthusiasts in IIT Guwahati</p>
         <p><a href="#" class="btn btn-primary btn-large">Learn more &raquo;</a></p>
       </div>
 	
