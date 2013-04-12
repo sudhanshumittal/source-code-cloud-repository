@@ -4,7 +4,7 @@ include './include.php';
 session_start();
 if(!in_session()) destroy_session();
 
-if(isset($_GET['searchText'])) $searchText =  $_GET['searchText'];
+if(isset($_GET['searchText'])) $searchText1 =  $_GET['searchText'];
 else header("Location: ./index.php");
 
 $con=mysqli_connect("localhost","root","","repo");
@@ -33,28 +33,9 @@ if (!$con)
     </style>
 </head>
 <body onload="prettyPrint()">
-	<div class="navbar navbar-inverse navbar-fixed-top">
-		  <div class="navbar-inner">
-			<div class="container">
-			  <a class="brand" href="#">Code Repo</a>
-			  <div class="nav-collapse collapse">
-				<ul class="nav">
-				  <li class="active"><a href="#"> Home</a></li>
-				  <li><a href="#about">Profile</a></li>
-				  <li><a href="#about">About</a></li>
-				  <li><a href="#contact">Contact</a></li>
-				  <li class="pull right"><a href ="./signout.php">Sign out</a></li>
-				</ul>
-			  </div><!--/.nav-collapse -->
-				<form class="navbar-search pull-right" method ="GET" action = "search.php">
-					<div class="input-prepend">					  
-					  <input class="search-query span4" id="inputIcon" type="text" name ="searchText" placeholder="Search someone or something…" value="<?php
-					  echo $searchText;?>">
-					</div>				  
-				</form>
-			</div>
-		  </div>
-		</div>
+	<?php
+	menu('search');
+	?>
 
 	<div class="container-fluid span10 offset2">
 	   <?php
@@ -62,7 +43,7 @@ if (!$con)
 	   $con=mysql_connect("localhost","root","");
 	   mysql_select_db("repo");
 			
-	   $searchText = explode(" ",$searchText);
+	   $searchText = explode(" ",$searchText1);
 	   $projects = Array();
 	   foreach( $searchText as $word){
 			if ($word =="" or $word ==" ") continue;
@@ -100,7 +81,13 @@ if (!$con)
 		mysql_close($con);
 	   if($count ==0){
 		/*no results were displayed*/
+		echo '<div class="alert alert-error"><strong>Sorry, no results were found for the search "'.$searchText1.' ".</strong>
+		<button type="button" class="close" data-dismiss="alert">&times;</button></div>
+		<form action="wishlist.php" method = "get">
 		
+		<input class = "btn btn-primary" value="Notify me when results related to this search are found" type="submit">
+		<input type = "text" class="hidden" name="searchQuery" value="'.$searchText1.'" />
+		</form>';
 	   }
 	   
 	   ?>

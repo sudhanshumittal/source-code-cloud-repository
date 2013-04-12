@@ -8,6 +8,7 @@ create table user(
 	designation smallint,
 	email varchar(20) ,
 	password varchar(40),
+	rating smallint default	'0' ,
 	UNIQUE(email),
 	primary key(user_id)
 );
@@ -27,7 +28,7 @@ create table project(
 	title varchar(20),
 	description varchar(100),
 	url varchar(20),
-	rating smallint,
+	rating smallint default '0',
 	primary key(project_id)
 );
 create table tag(

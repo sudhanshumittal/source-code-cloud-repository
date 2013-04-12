@@ -13,7 +13,12 @@ if(isset($_REQUEST['rating'])){
 	if (!$result) {
 			die('Invalid query: ' . mysql_error());
 	}
-	
+	$query = 'select u.rating from user u,shares s where u.user_id s.user_id and s.project_id = '.$_POST['project_id'].';';
+	$result = mysql_query($query);
+	if(!$result) {
+			die('Invalid query: ' . mysql_error());
+	}
+	mysql_close($con);
 	header("Location: ./project.php?user_id=".$_POST['user_id']."&project=".$_POST['project_id']);
 }else
 	header("Location: ./index.php");

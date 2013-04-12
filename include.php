@@ -22,24 +22,36 @@ echo'
 			  <div class="nav-collapse collapse">
 				<ul class="nav">';
 switch($page){
-case'project':			echo' 
+case'project':			
+echo' 
 				 <li ><a href="./index.php"> Home</a></li>
 				  <li class="active"><a href="#">Profile</a></li>
 				  <li><a href="#about">About</a></li>
-				  <li><a href="#contact">Contact</a></li>
+			
 				  <li class="pull right"><a href ="./signout.php">Sign out</a></li>
 				</ul>
 			  </div>';
 			  break;
-case 'index':			echo'
+case 'index':			
+echo'
 				 <li class="active"><a > Home</a></li>
 				  <li ><a href="./project.php?user_id='.$_SESSION['user_id'].'">Profile</a></li>
 				  <li><a href="#about">About</a></li>
-				  <li><a href="#contact">Contact</a></li>
+				 
 				  <li class="pull right"><a href ="./signout.php">Sign out</a></li>
 				</ul>
 			  </div>';
 			  break;
+case 'search':
+echo'
+				 <li ><a href="./index.php"> Home</a></li>
+				 
+				  <li ><a href="./project.php?user_id='.$_SESSION['user_id'].'">Profile</a></li>
+				  <li><a href="#about">About</a></li>
+				  
+				  <li class="pull right"><a href ="./signout.php">Sign out</a></li>
+				</ul>
+			  </div>';
 }
 			  echo' <!--/.nav-collapse -->
 				<form class="navbar-search pull-right" method ="GET" action = "search.php">
