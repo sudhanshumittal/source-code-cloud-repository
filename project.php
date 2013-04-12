@@ -103,9 +103,12 @@ if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_
 		<div class = "row-fluid">
 		<h1><?php echo $user_name ;?></h1>
 		<div class="btn-group offset6">
-			  <button class="btn <?php if($user_id !== $_SESSION['user_id'] or isset($_GET['project'])) echo "disabled" ;?>" href="#addProjectModal" data-toggle="modal">Add project</button>
-			  <button class="btn <?php if($user_id !== $_SESSION['user_id'] or !isset($_GET['project'])  ) echo "disabled" ;?>" href="#addFileModal" data-toggle="modal">Add file</button>
-			  <a class="btn <?php if($user_id !== $_SESSION['user_id']) echo "disabled" ;?>" 
+			  <button class="btn  <?php if($user_id !== $_SESSION['user_id'] or isset($_GET['project'])) echo '" disabled = "disabled' ;
+				else echo 'btn-primary' ;?>" href="#addProjectModal" data-toggle="modal">Add project</button>
+			  <button class="btn  <?php if($user_id !== $_SESSION['user_id'] or !isset($_GET['project'])  ) echo '" disabled = "disabled' ;
+				else echo 'btn-primary' ;?>" href="#addFileModal" data-toggle="modal">Add file</button>
+			  <a class="btn <?php if(!isset($_GET['project'])) echo '" disabled = "disabled' ;
+				else echo 'btn-primary' ;?>" 
 			  href="<?php if(isset($_GET['project'])) echo './download.php?project_id='.$_GET['project']; 
 						  if(isset($_GET['file'])) echo "&file_id=".$_GET['file'] ;
 			  ?>" >Download</a>
@@ -139,41 +142,7 @@ if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_
 				
 				</ul>
 				<div class = "row-fluid"><?php
-					/*rating bar*/
-					if(isset($_GET['project']) and !isset($_GET['file'])){
-						echo '<div class = " span6 pull-right"><form action= "./rate.php" method = "post">
-							
-						 Rating : ';
-						$query = "select rating from rates where project_id = '".$_GET['project']."';";
-						//echo $query;
-						$result = mysql_query($query);
-						if (!$result) {
-								die('Invalid query: ' . mysql_error());
-						}
-						$rating =0;
-						$count = 0;
-						while($i = mysql_fetch_assoc($result)){
-							$count++;
-							$rating += $i['rating'];
-						}
-						if($count !=0)
-							echo "  ".round($rating/$count, 2)." / 5 ";
-						else 
-							echo "No one has rated this project yet";
-						if($user_id != $_SESSION['user_id']) /*user cannot rate his own project*/
-						{
-						
-						echo '<select name="rating" value="language" class = "span2">';
-						for( $i =5; $i>=1 ; $i--)
-							echo '<option>'.$i.'</option>';
-						echo '</select>
-						<input class= "btn btn-mini" type="submit"  value ="Rate" />
-						<input class= " hidden span1" type="text" name="project_id" value ="'.$_GET['project'].'" />
-						<input class= "hidden span1" type="text" name = "user_id" value ="'.$_GET['user_id'].'" />					
-						}
-						</form></div>';
-						
-					}
+					
 				?>
 				</div>
 				<?php
@@ -385,7 +354,43 @@ if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_
 		while($i = mysql_fetch_assoc($result)){
 			echo '<dl class = "dl-horizontal">';
 			echo	'<dt>Project rating</dt>
-				<dd><small>'.$i["rating"].'/10</small><dd>';
+				<dd><small>';
+			/*rating bar*/
+			if(isset($_GET['project']) and !isset($_GET['file'])){
+				
+				$query = "select rating from rates where project_id = '".$_GET['project']."';";
+				//echo $query;
+				$result = mysql_query($query);
+				if (!$result) {
+						die('Invalid query: ' . mysql_error());
+				}
+				$rating =0;
+				$count = 0;
+				while($i = mysql_fetch_assoc($result)){
+					$count++;
+					$rating += $i['rating'];
+				}
+				if($count !=0)
+					echo "  ".round($rating/$count, 2)." / 5 ";
+				else 
+					echo "No one has rated this project yet";
+				if($_GET['user_id'] != $_SESSION['user_id']) /*user cannot rate his own project*/
+				{
+					echo '<form action= "./rate.php" method = "post" class ="form-inline"> ';
+					echo '<label><select name="rating" class="span14">';
+					for( $i =5; $i>=1 ; $i--)
+						echo '<option>'.$i.'</option>';
+					echo '</select></label>
+					<button class= "btn btn-primary" type="submit"  >Rate</button>
+					<input class= "hidden span1" type="text" name="project_id" value ="'.$_GET['project'].'" />
+					<input class= "hidden span1" type="text" name = "user_id" value ="'.$_GET['user_id'].'" />					
+					
+					';
+					echo '</form>';
+				}
+				
+			}	
+			echo '</small><dd>';
 			echo	'<dt>Language</dt>
 				<dd><small>'.$i["langauge"].'</small><dd>';
 			echo	'<dt>About</dt>
