@@ -24,16 +24,16 @@ $results = mysql_query($query);
 		   $count=0;
 		   while($i=mysql_fetch_array($results)){
 				$files[$count]=$i["url"].$i["code_id"].".".$i["extension"];
-				//echo $files[$count]."<br>";
+				echo $files[$count]."<br>";
 				$count++;
 				
 			}
-$zip = create_zip($files,$pid.".zip");
+/*$zip = create_zip($files,$pid.".zip");
 
 header('Content-type: Application/zip');
 header('Content-Disposition: attachment; filename="'.$pid.'.zip"');
 readfile($pid.'.zip');
-
+*/
 }
 
 function download_file($fid){

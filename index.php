@@ -26,11 +26,41 @@ if(!in_session()) destroy_session();
 	?>
 
  <div class="hero-unit">
-        <h1>Wlcome to IITG Source Code Repository!</h1>
-		<p>We provide a platform to share your code with other programming enthusiasts in IIT Guwahati</p>
-        <p><a href="#" class="btn btn-primary btn-large">Learn more &raquo;</a></p>
-      </div>
-	
+        <h1>Welcome to IITG Source Code Repository!</h1>
+		<p>We provide you a platform to share, discuss and critic source codes with programming enthusiasts in IIT Guwahati. </p>
+        <p><a href="./about.php" class="btn btn-primary btn-large">Learn more &raquo;</a></p>
+</div>
+<div class= "container-fluid">
+	<div class="row-fluid">
+		<div class="span4">
+		<div class="thumbnail">
+		<img data-src="holder.js/160x120" alt="" src = "assets/img/upload-2-256.gif">
+		
+		<h3>Share</h3>
+		<p>your code</p>
+		</div>
+		</div>
+		
+		<div class="span4">
+		<div class="thumbnail">
+		<img data-src="holder.js/160x120" alt="" src = "assets/img/download-13-256.gif">
+		
+		<h3>Share</h3>
+		<p>your code</p>
+		</div>
+		</div>
+		
+		<div class="span4">
+		<div class="thumbnail">
+		<img data-src="holder.js/160x120" alt="" src = "assets/img/chat-3-256.gif">
+		
+		<h3>Share</h3>
+		<p>your code</p>
+		</div>
+		</div>
+		
+	</div>
+</div>	
 	<script src="assets/js/jquery-1.9.1.min.js"></script>
 	<script src="assets/js/bootstrap.min.js"></script>
 

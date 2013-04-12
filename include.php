@@ -32,8 +32,8 @@ case'project':			echo'
 			  </div>';
 			  break;
 case 'index':			echo'
-				 <li  class="active"><a href=""> Home</a></li>
-				  <li class="active"><a href="./project.php?user_id='.$_SESSION['user_id'].'">Profile</a></li>
+				 <li class="active"><a > Home</a></li>
+				  <li ><a href="./project.php?user_id='.$_SESSION['user_id'].'">Profile</a></li>
 				  <li><a href="#about">About</a></li>
 				  <li><a href="#contact">Contact</a></li>
 				  <li class="pull right"><a href ="./signout.php">Sign out</a></li>
@@ -44,7 +44,7 @@ case 'index':			echo'
 			  echo' <!--/.nav-collapse -->
 				<form class="navbar-search pull-right" method ="GET" action = "search.php">
 					<div class="input-prepend">					  
-					  <input class="search-query span4" id="inputIcon" type="text" name ="searchText" placeholder="Search someone or something…">
+					  <input class="search-query span4 " id="inputIcon" type="text" name ="searchText" placeholder="Search someone or something…">
 					</div>				  
 				</form>
 			</div>

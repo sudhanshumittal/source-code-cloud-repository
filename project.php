@@ -103,7 +103,7 @@ if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_
 		<div class = "row-fluid">
 		<h1><?php echo $user_name ;?></h1>
 		<div class="btn-group offset6">
-			  <button class="btn <?php if($user_id !== $_SESSION['user_id']) echo "disabled" ;?>" href="#addProjectModal" data-toggle="modal">Add project</button>
+			  <button class="btn <?php if($user_id !== $_SESSION['user_id'] or isset($_GET['project'])) echo "disabled" ;?>" href="#addProjectModal" data-toggle="modal">Add project</button>
 			  <button class="btn <?php if($user_id !== $_SESSION['user_id'] or !isset($_GET['project'])  ) echo "disabled" ;?>" href="#addFileModal" data-toggle="modal">Add file</button>
 			  <a class="btn <?php if($user_id !== $_SESSION['user_id']) echo "disabled" ;?>" 
 			  href="<?php if(isset($_GET['project'])) echo './download.php?project_id='.$_GET['project']; 
@@ -116,6 +116,7 @@ if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_
 	  <div class="row-fluid">
 			<div class="span9 " >
 			<div class="row-fluid" >
+			<!-- breadcrumbs-->
 				<ul class="breadcrumb" style = "background-color:#E8EFFD;">
 				<?php 
 					if(isset($_GET['user_id'])){ //user page
@@ -137,43 +138,46 @@ if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_
 				?>
 				</ul>
 				<?php
-				if(isset($_GET['file'])){	//file page
-					$user_id = $_GET['user_id'];
-					$project = $_GET['project'];
-					$file = $_GET['file'];
-			
-					echo '<pre class="prettyprint linenums languague-'.$extension.'" >';
-					$code = file_get_contents('./data/'.$user_id.'/'.$project.'/'.$file.'.'.$extension);
-					echo $code;
-					echo '</pre>';
-				}
-				else if(isset($_GET['project'])){	//project page
-					echo '<div class="container" >';
-					echo '<h5>Files</h5>';
-					
-					$user_id = $_GET['user_id'];
-					$project = $_GET['project'];
-					$query = 'select c.code_id, c.title from code c, contains co where c.code_id = co.code_id and co.project_id = '.$project.';';
-					$result = mysql_query( $query);
-					if (!$result) {
-							die('Invalid query: ' . mysql_error());
-						}
-					while($i = mysql_fetch_assoc($result)){
-						if($user_id == $_SESSION['user_id']) 
-							echo '<div class = "span6"><button type="button" class="btn close" href="#dropFileModal" data-toggle="modal" onClick="drop_code('.$i["code_id"].',\''.$i["title"].'\')" >×</button>';
-						echo '<a href="?user_id='.$user_id.'&project='.$project.'&file='.$i['code_id'].'">'.$i["title"].'</a> <br></div>';
-						
+					if(isset($_GET['file'])){	//file page
+						$user_id = $_GET['user_id'];
+						$project = $_GET['project'];
+						$file = $_GET['file'];
+				
+						echo '<pre class="prettyprint linenums languague-'.$extension.'" >';
+						$code = file_get_contents('./data/'.$user_id.'/'.$project.'/'.$file.'.'.$extension);
+						echo $code;
+						echo '</pre>';
 					}
-					echo'</div><hr>';
+					else if(isset($_GET['project'])){	//project page
+						echo '<div class="container" >';
+						echo '<h3>Files</h3>';
 						
-					about(0);
-				}
-				else if(isset($_GET['user_id'])){ //user page
+						$user_id = $_GET['user_id'];
+						$project = $_GET['project'];
+						$query = 'select c.code_id, c.title from code c, contains co where c.code_id = co.code_id and co.project_id = '.$project.';';
+						$result = mysql_query( $query);
+						if (!$result) {
+								die('Invalid query: ' . mysql_error());
+							}
+						while($i = mysql_fetch_assoc($result)){
+							if($user_id == $_SESSION['user_id']) 
+								echo '<div class = "span6">
+								<button type="button" class="btn close" href="#dropFileModal" data-toggle="modal" onClick="drop_code('.$i["code_id"].',\''.$i["title"].'\')" >
+								<i class="icon-remove"></i>
+								</button>';
+							echo '<a href="?user_id='.$user_id.'&project='.$project.'&file='.$i['code_id'].'">'.$i["title"].'</a> <br></div>';
+							
+						}
+						echo'</div><hr>';
+							
+						about(0);
+					}
+					else if(isset($_GET['user_id'])){ //user page
 							$user_id = $_GET['user_id'];
 							//$user_id = 1;
 							$query = 'select p.project_id, p.title from project p,shares s where p.project_id = s.project_id and s.user_id = '.$user_id.';';
 							echo '<div class="container" >';
-							echo '<h5>Projects</h5>';
+							echo '<h3>Projects</h3>';
 								
 							$result = mysql_query($query);
 							if (!$result) {
@@ -181,16 +185,20 @@ if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_
 							}
 							while($i = mysql_fetch_assoc($result)){
 								if($user_id == $_SESSION['user_id']) 
-									echo '<div class="span6"><button type="button" class="btn close" href="#dropProjectModal" data-toggle="modal" onClick="drop_project('.$i["project_id"].',\''.$i["title"].'\')" >×</button>';
-								echo '<a href="?user_id='.$user_id.'&project='.$i["project_id"].'">'.$i["title"].'</a><br></div>';
-								echo'</div><hr>';
+									echo '<div class="row span8" >
+									<button type="button" class="btn close" href="#dropProjectModal" data-toggle="modal" onClick="drop_project('.$i["project_id"].',\''.$i["title"].'\')" >
+									<i class="icon-remove " ></i>
+									</button>';
+								echo ' <a href="?user_id='.$user_id.'&project='.$i["project_id"].'">'.$i["title"].'</a><br></div>';
+								
 							}
+							echo'</div><hr>';
 							echo '<div class="container-fluid">';
 								about(1);
 							echo '</div>';
 					
 				}
-					?>			
+				?>			
 
 			</div>		
 			</div>
@@ -207,36 +215,40 @@ if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_
 	<!-- add project form -->
 	<div id="addProjectModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	  <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-		<h3 id="myModalLabel">Add a new Project</h3>
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
+		<h3 id="myModalLabel">Create a new Project</h3>
 	  </div>
 	  <form method ="POST" action ="./project.php?user_id=<?php echo $user_id;?> ">
 	  <div class="modal-body">
 		<table>
 			<tr>
-				<td>Project title</td>
 				<td><input type="text" name ="project_title" placeholder ="project title" /></td>
 			</tr>
 			<tr>
-				<td>Language</td>
-				<td><input type="text" name ="language" placeholder ="project language" /></td>
+				<td>
+					<select name="language" value="language">
+					<option>C</option>
+					<option>C++</option>
+					<option>Php</option>
+					<option>Java</option>
+					</select>
+				</td>
 			</tr>
 			<tr>
-				<td>Description</td>
-				<td><input type="text" name ="description" placeholder ="project description" /></td>
+				<td> <input type="text" name ="description" placeholder ="project description" /></td>
 			</tr>
 		</table>
 	  </div>
 	  <div class="modal-footer">
-		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-		<button class="btn btn-primary" type ="submit" >Save changes</button>
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		<button class="btn btn-primary" type ="submit" >Continue</button>
 	  </div>
 	  </form>
 	</div>
-	<!-- drop project form 
+	<!-- drop project form -->
 	<div id="dropProjectModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	  <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
 		<h3 id="myModalLabel">Drop Project</h3>
 	  </div>
 	  <div class="modal-body">
@@ -244,14 +256,14 @@ if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_
 		<p>Are you sure you want to continue?</p>
 	  </div>
 	  <div class="modal-footer">
-		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
 		<a class="btn btn-primary" id="delete_project" >Continue</a>
 	  </div>
-	</div>-->
+	</div>
 	<!-- add file form -->
 	<div id="addFileModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	  <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
 		<h3 id="myModalLabel">Add a new file to this Project</h3>
 	  </div>
 	  <form action="<?php echo $url ;?>" method="post" enctype="multipart/form-data">
@@ -260,7 +272,7 @@ if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_
 		<input type="file" name="file" id="file" class =""><br>
 	  </div>
 	  <div class="modal-footer">
-		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
 		<button class="btn btn-primary" type="submit">Upload</button>
 	  </div>
 	  </form>
@@ -269,7 +281,7 @@ if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_
 	<!-- drop file form -->
 	<div id="dropFileModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	  <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
 		<h3 id="myModalLabel">Drop files from this Project</h3>
 	  </div>
 	  <div class="modal-body">
@@ -277,7 +289,7 @@ if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_
 		<p>Are you sure you want to continue?</p>
 	  </div>
 	  <div class="modal-footer">
-		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
 		<a class="btn btn-primary" id="delete_code" >Continue</a>
 	  </div>
 	</div>
@@ -290,7 +302,7 @@ if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_
 </html>
 <?php
 	function comments(){
-		echo '<h4>Comments</h4><hr>';
+		echo '<h3>Comments</h3><hr>';
 		//echo '<div class="media">
 		echo '<dl class = "">';
 		echo '<form action="project.php?user_id='.$_GET['user_id'].'&project='.$_GET['project'].'" method = "POST" >
@@ -312,12 +324,16 @@ if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_
 	function about($type){
 	 
 	if($type==1){ /*about some user*/
+		echo '<h3>About</h3> ';
+		if($_SESSION['user_id'] == $_GET['user_id'] ) echo '<a onClick ="edit_profile()" >edit</a>';
 		$query = "select * from user where user_id = ".$_GET['user_id']." ;";
 		$result = mysql_query($query);	
 		while($i = mysql_fetch_assoc($result)){
 			echo '<dl class = "dl-horizontal">';
+			echo	'<dt>Email Address</dt>
+				<dd><small>'.$i["email"].'</small><dd>';
 			echo	'<dt>Skill Rating</dt>
-				<dd><small>'.$i["skill_level"].'/10</small><dd>';
+				<dd><small>'.$i["skill_level"].'</small><dd>';
 			echo	'<dt>Designation</dt>
 				<dd><small>'.$i["designation"].'</small><dd>';
 			echo '</dl>';	
@@ -378,7 +394,7 @@ if (in_array($extension, $allowedExts))
       {
 		
       //add file to db 
-	  echo $extension;
+	 // echo $extension;
 	   $query  = 'insert into code(	description,	url ,	title, extension	 ) 
 	   values("","data/'.$user_id.'/'.$project.'/","'.$_FILES["file"]["name"].'","'.$extension.'" )';
 	  // echo $query;
@@ -395,7 +411,7 @@ if (in_array($extension, $allowedExts))
 	  //echo "./data/".$_SESSION['user_id']."/".$project."/";
 	  
 	  move_uploaded_file($_FILES["file"]["tmp_name"],
-      "./data/".$_SESSION['user_id']."/".$project."/".$i['max_id'].".".$extension	);
+      "./data/".$_SESSION['user_id']."/".$project."/".$i['max_id']	);
       
 	  
 	  }
@@ -423,29 +439,63 @@ function delete_project($pro_id){
 	/*drop all codes in the project*/
 		$query = 'select code_id from contains where project_id='.$pro_id.';';		
 		$result = mysql_query($query);
+		if (!$result) {
+			die('Invalid query: ' . mysql_error());
+		}
+		else try{
 		while($i = mysql_fetch_assoc($result)){
 				$query = 'delete from code where code_id='.$i["code_id"].';';
 				$result = mysql_query($query);			
-		}
+		}}
+		
 		/* drop project */
 		$query = 'delete from project where project_id='.$pro_id.';';
 		$result = mysql_query($query);
 		if (!$result) {
 			die('Invalid query: ' . mysql_error());
 		}
-		/*delete folder not done yet*/
+		$query = 'delete from shares where project_id='.$pro_id.';';
+		$result = mysql_query($query);
+		if (!$result) {
+			die('Invalid query: ' . mysql_error());
+		}
+		$query = 'delete from comments where project_id='.$pro_id.';';
+		$result = mysql_query($query);
+		if (!$result) {
+			die('Invalid query: ' . mysql_error());
+		}
+		$query = 'delete from rates where project_id='.$pro_id.';';
+		$result = mysql_query($query);
+		if (!$result) {
+			die('Invalid query: ' . mysql_error());
+		}
 		
+		/*delete folder*/
+		$dir = ("data/".$_SESSION['user_id']."/".$pro_id);
+		$it = new RecursiveDirectoryIterator($dir);
+		$it = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
+		foreach($it as $file) {
+			if ('.' === $file->getBasename() || '..' ===  $file->getBasename()) continue;
+			if ($file->isDir()) rmdir($file->getPathname());
+			else unlink($file->getPathname());
+		}
+		rmdir($dir);
 }
 function delete_code($id){
-
+		echo $id .'<br>';
 		/* drop file */
+		$query = 'delete from contains where code_id='.$id.';';
+		$result = mysql_query($query);
+		if (!$result) {
+			die('Invalid query: ' . mysql_error());
+		}
 		$query = 'delete from code where code_id='.$id.';';
 		$result = mysql_query($query);
 		if (!$result) {
 			die('Invalid query: ' . mysql_error());
 		}
 		/*delete folder not done yet*/
-		
+		unlink("data/".$_SESSION['user_id']."/".$_GET['project_id']."/".$id);
 }
 if($con) mysql_close($con);
 ?>
@@ -454,6 +504,11 @@ if($con) mysql_close($con);
 	//alert(title);
 	document.getElementById("delete_project").href = "./project.php?user_id="+<?php echo $user_id; ?>+"&del_project="+pro;
 	document.getElementById("delete_project_para").innerHTML = "You are about to delete the project named - <strong>"+title+"</strong>";
+ } 
+ function edit_profile(){
+	alert("edit_profile");
+	//document.getElementById("delete_project").href = "./project.php?user_id="+<?php echo $user_id; ?>+"&del_project="+pro;
+	//document.getElementById("delete_project_para").innerHTML = "You are about to delete the project named - <strong>"+title+"</strong>";
  } 
  function drop_code(code_id, title){
 	//alert(code_id+" "+title);
