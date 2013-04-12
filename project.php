@@ -348,12 +348,8 @@ if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_
 		}
 	}
 	else{ /*about some project*/
-		{
-		$query = "select * from project where project_id = ".$_GET['project']." ;";
-		$result = mysql_query($query);	
-		while($i = mysql_fetch_assoc($result)){
-			echo '<dl class = "dl-horizontal">';
-			echo	'<dt>Project rating</dt>
+		echo '<dl class = "dl-horizontal">';
+		echo	'<dt>Project rating</dt>
 				<dd><small>';
 			/*rating bar*/
 			if(isset($_GET['project']) and !isset($_GET['file'])){
@@ -391,13 +387,18 @@ if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_
 				
 			}	
 			echo '</small><dd>';
+		$query = "select * from project where project_id = ".$_GET['project']." ;";
+		$result = mysql_query($query);	
+		while($i = mysql_fetch_assoc($result)){
+			
+			
 			echo	'<dt>Language</dt>
 				<dd><small>'.$i["langauge"].'</small><dd>';
 			echo	'<dt>About</dt>
 				<dd><small>'.$i["description"].'</small><dd>';
-			echo '</dl>';
+			
 		}
-		}
+		echo '</dl>';
 	}
 }
 function create_project($user_id, $project,$title, $language, $description){
