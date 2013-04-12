@@ -374,6 +374,7 @@ function create_project($user_id, $project,$title, $language, $description){
 	$result = mysql_query($query);
 	/*cretae a folder for this project in folder data/user_id*/
 	mkdir('data/'.$_SESSION['user_id'].'/'.$i['max_pro']);
+	alert_success("Project Successfully created.");
 }
 function upload($user_id, $project){
 $allowedExts = array("c", "cpp", "txt","php","java");
@@ -442,14 +443,14 @@ function delete_project($pro_id){
 		if (!$result) {
 			die('Invalid query: ' . mysql_error());
 		}
-		else try{
+		else 
 		while($i = mysql_fetch_assoc($result)){
 				$query = 'delete from code where code_id='.$i["code_id"].';';
 				$result = mysql_query($query);			
-		}}
+		}
 		
 		/* drop project */
-		$query = 'delete from project where project_id='.$pro_id.';';
+		$query = 'delete from project where project_id = ' .$pro_id;
 		$result = mysql_query($query);
 		if (!$result) {
 			die('Invalid query: ' . mysql_error());
@@ -471,6 +472,7 @@ function delete_project($pro_id){
 		}
 		
 		/*delete folder*/
+		try{
 		$dir = ("data/".$_SESSION['user_id']."/".$pro_id);
 		$it = new RecursiveDirectoryIterator($dir);
 		$it = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
@@ -480,6 +482,11 @@ function delete_project($pro_id){
 			else unlink($file->getPathname());
 		}
 		rmdir($dir);
+		}
+		catch (Exception $e) {
+			alert_error('This project does not exist. Caught exception: '.  $e->getMessage());
+		}
+		alert_success("Project successfully deleted");
 }
 function delete_code($id){
 		echo $id .'<br>';
@@ -496,6 +503,7 @@ function delete_code($id){
 		}
 		/*delete folder not done yet*/
 		unlink("data/".$_SESSION['user_id']."/".$_GET['project_id']."/".$id);
+		alert_success("File successfully deleted from your project ");
 }
 if($con) mysql_close($con);
 ?>
