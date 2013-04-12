@@ -136,7 +136,46 @@ if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_
 						}
 					}
 				?>
+				
 				</ul>
+				<div class = "row-fluid"><?php
+					/*rating bar*/
+					if(isset($_GET['project']) and !isset($_GET['file'])){
+						echo '<div class = " span6 pull-right"><form action= "./rate.php" method = "post">
+							
+						 Rating : ';
+						$query = "select rating from rates where project_id = '".$_GET['project']."';";
+						//echo $query;
+						$result = mysql_query($query);
+						if (!$result) {
+								die('Invalid query: ' . mysql_error());
+						}
+						$rating =0;
+						$count = 0;
+						while($i = mysql_fetch_assoc($result)){
+							$count++;
+							$rating += $i['rating'];
+						}
+						if($count !=0)
+							echo "  ".round($rating/$count, 2)." / 5 ";
+						else 
+							echo "No one has rated this project yet";
+						if($user_id != $_SESSION['user_id']) /*user cannot rate his own project*/
+						{
+						
+						echo '<select name="rating" value="language" class = "span2">';
+						for( $i =5; $i>=1 ; $i--)
+							echo '<option>'.$i.'</option>';
+						echo '</select>
+						<input class= "btn btn-mini" type="submit"  value ="Rate" />
+						<input class= " hidden span1" type="text" name="project_id" value ="'.$_GET['project'].'" />
+						<input class= "hidden span1" type="text" name = "user_id" value ="'.$_GET['user_id'].'" />					
+						}
+						</form></div>';
+						
+					}
+				?>
+				</div>
 				<?php
 					if(isset($_GET['file'])){	//file page
 						$user_id = $_GET['user_id'];
@@ -482,11 +521,11 @@ function delete_project($pro_id){
 			else unlink($file->getPathname());
 		}
 		rmdir($dir);
+		alert_success("Project successfully deleted");
 		}
 		catch (Exception $e) {
 			alert_error('This project does not exist. Caught exception: '.  $e->getMessage());
 		}
-		alert_success("Project successfully deleted");
 }
 function delete_code($id){
 		echo $id .'<br>';
