@@ -81,13 +81,18 @@ if (!$con)
 		mysql_close($con);
 	   if($count ==0){
 		/*no results were displayed*/
+		if(!isset($_GET['msg'])){
 		echo '<div class="alert alert-error"><strong>Sorry, no results were found for the search "'.$searchText1.' ".</strong>
 		<button type="button" class="close" data-dismiss="alert">&times;</button></div>
-		<form action="wishlist.php" method = "get">
+		<form action="wishlist.php" method = "post">
 		
 		<input class = "btn btn-primary" value="Notify me when results related to this search are found" type="submit">
 		<input type = "text" class="hidden" name="searchQuery" value="'.$searchText1.'" />
 		</form>';
+		}
+		else{
+			alert_success('Query "'.$searchText1.'" successfully added to your wishlist');
+		}
 	   }
 	   
 	   ?>

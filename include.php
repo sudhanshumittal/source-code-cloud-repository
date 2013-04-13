@@ -65,4 +65,16 @@ echo'
 
 		
 }
+function alert_success($msg){
+	//if($alert==1){
+		echo '<div class="alert"><button type="button" class="close" data-dismiss="alert">&times;</button><strong>'.$msg.'</strong></div>';
+//	}
+	
+}
+function alert_error($msg){
+	//if($alert==1){
+		echo '<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">&times;</button><strong>Oh snap ! '.$msg.'</strong></div>';
+//	}
+	
+}
 ?>

@@ -74,8 +74,7 @@ $url.="&file=".$file;
 //echo "\nproject =".$project;
 //echo "./project.php?".$user_id."&".$project."&".$file ;
 if(isset($_FILES["file"]["name"])) echo upload($user_id,$project);
-if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_REQUEST['project_title'],$_REQUEST['language'], $_REQUEST['description'], $_REQUEST['tags'] );
-if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email"],$_REQUEST["designation_"]);
+if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_REQUEST['project_title'],$_REQUEST['language'], $_REQUEST['description'] );
 ?>
 <html>
 <head>
@@ -104,12 +103,9 @@ if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email
 		<div class = "row-fluid">
 		<h1><?php echo $user_name ;?></h1>
 		<div class="btn-group offset6">
-			  <button class="btn  <?php if($user_id !== $_SESSION['user_id'] or isset($_GET['project'])) echo '" disabled = "disabled' ;
-				else echo 'btn-primary' ;?>" href="#addProjectModal" data-toggle="modal">Add project</button>
-			  <button class="btn  <?php if($user_id !== $_SESSION['user_id'] or !isset($_GET['project'])  ) echo '" disabled = "disabled' ;
-				else echo 'btn-primary' ;?>" href="#addFileModal" data-toggle="modal">Add file</button>
-			  <a class="btn <?php if(!isset($_GET['project'])) echo '" disabled = "disabled' ;
-				else echo 'btn-primary' ;?>" 
+			  <button class="btn <?php if($user_id !== $_SESSION['user_id'] or isset($_GET['project'])) echo "disabled" ;?>" href="#addProjectModal" data-toggle="modal">Add project</button>
+			  <button class="btn <?php if($user_id !== $_SESSION['user_id'] or !isset($_GET['project'])  ) echo "disabled" ;?>" href="#addFileModal" data-toggle="modal">Add file</button>
+			  <a class="btn <?php if($user_id !== $_SESSION['user_id']) echo "disabled" ;?>" 
 			  href="<?php if(isset($_GET['project'])) echo './download.php?project_id='.$_GET['project']; 
 						  if(isset($_GET['file'])) echo "&file_id=".$_GET['file'] ;
 			  ?>" >Download</a>
@@ -140,12 +136,7 @@ if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email
 						}
 					}
 				?>
-				
 				</ul>
-				<div class = "row-fluid"><?php
-					
-				?>
-				</div>
 				<?php
 					if(isset($_GET['file'])){	//file page
 						$user_id = $_GET['user_id'];
@@ -246,9 +237,6 @@ if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email
 			<tr>
 				<td> <input type="text" name ="description" placeholder ="project description" /></td>
 			</tr>
-			<tr>
-				<td><input type="text" name="tags" placeholder="Tags seperated by comma" /></td>	
-			</tr>
 		</table>
 	  </div>
 	  <div class="modal-footer">
@@ -305,47 +293,11 @@ if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email
 		<a class="btn btn-primary" id="delete_code" >Continue</a>
 	  </div>
 	</div>
-	<!-- Edit Profile form -->
-	<div id="editProfileModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		
-	  <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
-		<h3 id="myModalLabel">Edit Your Profile</h3>
-	  </div>
-	  <p>
-		<form class="form-horizontal" method ="POST" action ="./project.php?user_id=<?php echo $user_id;?> ">
-		 
-		  <div class="control-group">
-			<label class="control-label" for="inputEmail">Email Address</label>
-			<div class="controls">
-			  <input type="text" name="email" placeholder="Email">
-			</div>
-		  </div>
-		  <div class="control-group">
-			<label class="control-label" for="inputEmail">Designation</label>
-			<div class="controls">
-			<select name="designation_">
-				<option value =0>B.Tech</option>
-				<option value =1>M.Tech</option>
-				<option value =2>PhD</option>
-				<option value =3>Faculty</option>
-				<option value =4>Other</option>
-			</select>
-			</div>
-		  </div>
-		  <div class="modal-footer">
-			<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-			<button class="btn btn-primary" type ="submit" >Continue</button>
-		  </div>
-		</form>
-	  </p>
-	</div>
-	
 	
 	<script src="assets/js/jquery-1.9.1.min.js"></script>
 	<script src="assets/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="assets/js/prettify.js"></script>
-	
+
 	</body>
 </html>
 <?php
@@ -373,81 +325,38 @@ if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email
 	 
 	if($type==1){ /*about some user*/
 		echo '<h3>About</h3> ';
-		if($_SESSION['user_id'] == $_GET['user_id'] ) echo '<a href="#editProfileModal" role="button" class="btn" data-toggle="modal">Edit Profile</a>';
+		if($_SESSION['user_id'] == $_GET['user_id'] ) echo '<a onClick ="edit_profile()" >edit</a>';
 		$query = "select * from user where user_id = ".$_GET['user_id']." ;";
 		$result = mysql_query($query);	
 		while($i = mysql_fetch_assoc($result)){
-			if($i["designation"] == 0 ) $d="B.Tech";
-			else if($i["designation"] == 1 ) $d="M.Tech";
-			else if($i["designation"] == 2 ) $d="Phd.";
-			else if($i["designation"] == 3 ) $d="Faculty";
-			else  $d="Other";
 			echo '<dl class = "dl-horizontal">';
 			echo	'<dt>Email Address</dt>
-				<dd><small>'.$i["email"].'</small></dd>';
-			echo	'<dt>Designation</dt>
-				<dd><small>'.$d.'</small></dd>';
+				<dd><small>'.$i["email"].'</small><dd>';
 			echo	'<dt>Skill Rating</dt>
-				<dd><small>'.$i["skill_level"].'</small></dd>';
-			
+				<dd><small>'.$i["skill_level"].'</small><dd>';
+			echo	'<dt>Designation</dt>
+				<dd><small>'.$i["designation"].'</small><dd>';
 			echo '</dl>';	
 		}
 	}
 	else{ /*about some project*/
-		echo '<dl class = "dl-horizontal">';
-		echo	'<dt>Project rating</dt>
-				<dd><small>';
-			/*rating bar*/
-			if(isset($_GET['project']) and !isset($_GET['file'])){
-				
-				$query = "select rating from rates where project_id = '".$_GET['project']."';";
-				//echo $query;
-				$result = mysql_query($query);
-				if (!$result) {
-						die('Invalid query: ' . mysql_error());
-				}
-				$rating =0;
-				$count = 0;
-				while($i = mysql_fetch_assoc($result)){
-					$count++;
-					$rating += $i['rating'];
-				}
-				if($count !=0)
-					echo "  ".round($rating/$count, 2)." / 5 ";
-				else 
-					echo "No one has rated this project yet";
-				if($_GET['user_id'] != $_SESSION['user_id']) /*user cannot rate his own project*/
-				{
-					echo '<form action= "./rate.php" method = "post" class ="form-inline"> ';
-					echo '<label><select name="rating" class="span14">';
-					for( $i =5; $i>=1 ; $i--)
-						echo '<option>'.$i.'</option>';
-					echo '</select></label>
-					<button class= "btn btn-primary" type="submit"  >Rate</button>
-					<input class= "hidden span1" type="text" name="project_id" value ="'.$_GET['project'].'" />
-					<input class= "hidden span1" type="text" name = "user_id" value ="'.$_GET['user_id'].'" />					
-					
-					';
-					echo '</form>';
-				}
-				
-			}	
-			echo '</small><dd>';
+		{
 		$query = "select * from project where project_id = ".$_GET['project']." ;";
 		$result = mysql_query($query);	
 		while($i = mysql_fetch_assoc($result)){
-			
-			
+			echo '<dl class = "dl-horizontal">';
+			echo	'<dt>Project rating</dt>
+				<dd><small>'.$i["rating"].'/10</small><dd>';
 			echo	'<dt>Language</dt>
 				<dd><small>'.$i["langauge"].'</small><dd>';
 			echo	'<dt>About</dt>
 				<dd><small>'.$i["description"].'</small><dd>';
-			
+			echo '</dl>';
 		}
-		echo '</dl>';
+		}
 	}
 }
-function create_project($user_id, $project,$title, $language, $description, $tags){
+function create_project($user_id, $project,$title, $language, $description){
 	/*search if the title already exisits for a user*/
 	/*if not create a project in db*/
 	$query = 'insert into project(title, description, url , langauge ) 
@@ -465,15 +374,6 @@ function create_project($user_id, $project,$title, $language, $description, $tag
 	$result = mysql_query($query);
 	/*cretae a folder for this project in folder data/user_id*/
 	mkdir('data/'.$_SESSION['user_id'].'/'.$i['max_pro']);
-	/*add tags*/
-	$tags = explode(",", $tags);
-	foreach( $tags as $j){
-		$query = 'insert into tag values("'. $i["max_pro"].'","'.$j.'");'; 
-		$result = mysql_query($query);
-		if (!$result) {
-				die('Invalid query: ' . mysql_error());
-		}
-	}
 	alert_success("Project Successfully created.");
 }
 function upload($user_id, $project){
@@ -524,7 +424,18 @@ else
   }
 
 }
-
+function alert_success($msg){
+	//if($alert==1){
+		echo '<div class="alert"><button type="button" class="close" data-dismiss="alert">&times;</button><strong>'.$msg.'</strong></div>';
+//	}
+	
+}
+function alert_error($msg){
+	//if($alert==1){
+		echo '<div class="alert alert-error"><button type="button" class="close" data-dismiss="alert">&times;</button><strong>Oh snap ! '.$msg.'</strong></div>';
+//	}
+	
+}
 function delete_project($pro_id){
 	/*drop all codes in the project*/
 		$query = 'select code_id from contains where project_id='.$pro_id.';';		
@@ -571,19 +482,12 @@ function delete_project($pro_id){
 			else unlink($file->getPathname());
 		}
 		rmdir($dir);
-		alert_success("Project successfully deleted");
 		}
 		catch (Exception $e) {
 			alert_error('This project does not exist. Caught exception: '.  $e->getMessage());
 		}
+		alert_success("Project successfully deleted");
 }
-
-function edit_profile($user_id,$email, $design){
-	$query = 'update user set email = "'.$email.'" , designation = '.$design.' where user_id = '.$user_id.';';  
-	mysql_query($query);
-	alert_success("Profile Successfully Updated.");
-}
-
 function delete_code($id){
 		echo $id .'<br>';
 		/* drop file */
@@ -609,7 +513,6 @@ if($con) mysql_close($con);
 	document.getElementById("delete_project").href = "./project.php?user_id="+<?php echo $user_id; ?>+"&del_project="+pro;
 	document.getElementById("delete_project_para").innerHTML = "You are about to delete the project named - <strong>"+title+"</strong>";
  } 
- 
  function edit_profile(){
 	alert("edit_profile");
 	//document.getElementById("delete_project").href = "./project.php?user_id="+<?php echo $user_id; ?>+"&del_project="+pro;
