@@ -9,6 +9,7 @@
 		}
 		else{
 			mysql_select_db("repo", $con);
+			$password = hash("sha512", $_REQUEST['loginPassword']); 
 			$query = 'select * from user where email = "'.$_REQUEST['loginEmail'].'" and  password = "'.$_REQUEST['loginPassword'].'"';
 			$result = mysql_query($query);
 			echo $query ;
@@ -48,12 +49,14 @@
 		}
 		else{
 			mysql_select_db("repo", $con);
+			$password = hash("sha512", $_REQUEST['inputPassword']);
+				
 			$query = 'insert into user (`first_name`,`last_name`,`designation`,`email`,`password`) values ("'
 			.$_REQUEST['inputFirstName'].'","'
 			.$_REQUEST['inputLastName'].'",'
 			.$_REQUEST['designation'].',"'
 			.$_REQUEST['inputEmail'].'","'
-			.$_REQUEST['inputPassword'].'")';
+			.$password.'")';
 			//	echo $query."<br>";
 			$result = mysql_query($query);
 			if($result==1){

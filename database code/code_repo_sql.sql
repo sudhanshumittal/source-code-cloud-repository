@@ -7,7 +7,7 @@ create table user(
 	skill_level decimal( 3,2) default '0',
 	designation smallint,
 	email varchar(40) ,
-	password varchar(40),
+	password varchar(50),
 	UNIQUE(email),
 	primary key(user_id)
 );
