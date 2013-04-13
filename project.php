@@ -103,7 +103,7 @@ if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_
 		<div class = "row-fluid">
 		<h1><?php echo $user_name ;?></h1>
 		<div class="btn-group offset6">
-			  <button class="btn <?php if($user_id !== $_SESSION['user_id'] or isset($_GET['project'])) echo "disabled" ;?>" href="#addProjectModal" data-toggle="modal">Add project</button>
+			  <button class="btn <?php if($user_id !== $_SESSION['user_id'] or isset($_GET['project'])) echo "disabled" ;?>" href="#addProjectModal" data-toggle="modal">Add project</button> 
 			  <button class="btn <?php if($user_id !== $_SESSION['user_id'] or !isset($_GET['project'])  ) echo "disabled" ;?>" href="#addFileModal" data-toggle="modal">Add file</button>
 			  <a class="btn <?php if($user_id !== $_SESSION['user_id']) echo "disabled" ;?>" 
 			  href="<?php if(isset($_GET['project'])) echo './download.php?project_id='.$_GET['project']; 
@@ -144,7 +144,8 @@ if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_
 						$file = $_GET['file'];
 				
 						echo '<pre class="prettyprint linenums languague-'.$extension.'" >';
-						$code = file_get_contents('./data/'.$user_id.'/'.$project.'/'.$file.'.'.$extension);
+						//echo 'data/'.$user_id.'/'.$project.'/'.$file;
+						$code = file_get_contents('data/'.$user_id.'/'.$project.'/'.$file);
 						echo $code;
 						echo '</pre>';
 					}
@@ -293,6 +294,29 @@ if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_
 		<a class="btn btn-primary" id="delete_code" >Continue</a>
 	  </div>
 	</div>
+	<!-- edit form-->
+	<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<p>
+		<form class="form-horizontal">
+		  <div class="control-group">
+			<label class="control-label" for="inputEmail">Email Address</label>
+			<div class="controls">
+			  <input type="text" id="inputEmail" placeholder="Email">
+			</div>
+		  </div>
+		  <div class="control-group">
+			<label class="control-label" for="inputEmail">Designation</label>
+			<div class="controls">
+			  <input type="text" id="inputEmail" placeholder="Designation">
+			</div>
+		  </div>
+		  	  <div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		<button class="btn btn-primary" type ="submit" >Continue</button>
+	  </div>
+		</form>
+		</p>
+	</div>
 	
 	<script src="assets/js/jquery-1.9.1.min.js"></script>
 	<script src="assets/js/bootstrap.min.js"></script>
@@ -325,7 +349,7 @@ if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_
 	 
 	if($type==1){ /*about some user*/
 		echo '<h3>About</h3> ';
-		if($_SESSION['user_id'] == $_GET['user_id'] ) echo '<a onClick ="edit_profile()" >edit</a>';
+		if($_SESSION['user_id'] == $_GET['user_id'] ) echo '<a href="#myModal" role="button" class="btn" data-toggle="modal">Edit Profile</a>';
 		$query = "select * from user where user_id = ".$_GET['user_id']." ;";
 		$result = mysql_query($query);	
 		while($i = mysql_fetch_assoc($result)){

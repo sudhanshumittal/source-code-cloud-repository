@@ -15,54 +15,67 @@ else if(isset($_GET['file_id'])) download_file($_GET['file_id']);
 }
 function download_project($pid){
 echo "project download starts now... please wait..."; 
-$query = "select code_id,url,extension from code where code_id in (select code_id from contains where project_id = ".$pid.");";
+$query = "select code_id,url,extension,title from code where code_id in (select code_id from contains where project_id = ".$pid.");";
 $files= Array();
+$temp_files=Array();
 $results = mysql_query($query);
 			if (!$results) {
 				die('Invalid query: ' . mysql_error());
 			}
 		   $count=0;
 		   while($i=mysql_fetch_array($results)){
-				$files[$count]=$i["url"].$i["code_id"].".".$i["extension"];
+				$files[$count]=$i["url"].$i["code_id"];
+				$temp_files[$count]=$i["title"];
+				copy($files[$count],$temp_files[$count]);
 				echo $files[$count]."<br>";
 				$count++;
 				
 			}
-/*$zip = create_zip($files,$pid.".zip");
-
-header('Content-type: Application/zip');
-header('Content-Disposition: attachment; filename="'.$pid.'.zip"');
+echo "<br><br>";
+$zip = create_zip($temp_files,$pid.".zip",true);
+for($i = 0; $i<count($temp_files);$i++) unlink($temp_files[$i]);
+if($zip == false) echo "false";
+header('Content-Type: application/zip');
+header('Content-disposition: attachment; filename='.$pid.'.zip');
+header('Content-Length: '.filesize($zipfilename));
 readfile($pid.'.zip');
-*/
+//unlink($pid.'.zip');
+
 }
 
 function download_file($fid){
 echo " file download starts now... please wait...";
-$query = "select url,extension from code where code_id = ".$fid.";";
+$query = "select url,extension,title from code where code_id = ".$fid.";";
 $results = mysql_query($query);
 			if (!$results) {
 				die('Invalid query: ' . mysql_error());
 			}
 		  
 		   $addr ="";
+		   $temp_addr=Array();
 		   while($i=mysql_fetch_array($results)){
-				$addr=$i["url"].$fid.".".$i["extension"];
-			
+				$addr=$i["url"].$fid;
+				echo "<br>".$addr;
+				$temp_addr[0]=$i["title"];
+				echo " ".$temp_addr;
+				copy($addr,$temp_addr[0]);
 			}
-//$zip = create_zip($addr,$fid.".zip");
-
-//echo $addr;
-//echo "****".$fid;
+$name =$temp_addr[0];
+$zip = create_zip($temp_addr,$name.".zip");
+unlink($temp_addr[0]);
 header('Content-type: Application/zip');
-header('Content-Disposition: attachment; filename="'.$fid.'.zip"');
-readfile($fid.'.zip');
+header('Content-Disposition: attachment; filename="'.$name.'.zip"');
+readfile($name.'.zip');
+
 }
 mysql_close($con);
 
 
 function create_zip($files = array(),$destination = '',$overwrite = false) {
 	//if the zip file already exists and overwrite is false, return false
-	if(file_exists($destination) && !$overwrite) { return false; }
+	if(file_exists($destination) && !$overwrite) { 
+		echo $destination."<br>";
+		return false; }
 	//vars
 	$valid_files = array();
 	//if files were passed in...
@@ -75,11 +88,15 @@ function create_zip($files = array(),$destination = '',$overwrite = false) {
 			}
 		}
 	}
+	
+	echo "count(valid files) = ".count($valid_files)."<br>";
+	
 	//if we have good files...
 	if(count($valid_files)) {
 		//create the archive
 		$zip = new ZipArchive();
 		if($zip->open($destination,$overwrite ? ZIPARCHIVE::OVERWRITE : ZIPARCHIVE::CREATE) !== true) {
+			echo "here";
 			return false;
 		}
 		//add the files
@@ -97,6 +114,7 @@ function create_zip($files = array(),$destination = '',$overwrite = false) {
 	}
 	else
 	{
+		echo "hi";
 		return false;
 	}
 }
