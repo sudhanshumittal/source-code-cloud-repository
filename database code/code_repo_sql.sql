@@ -4,11 +4,10 @@ create table user(
 	user_id integer auto_increment,
 	first_name varchar(15),
 	last_name varchar(15),
-	skill_level smallint,
+	skill_level decimal( 3,2) default '0',
 	designation smallint,
-	email varchar(20) ,
+	email varchar(40) ,
 	password varchar(40),
-	rating smallint default	'0' ,
 	UNIQUE(email),
 	primary key(user_id)
 );
@@ -24,11 +23,11 @@ create table code (
 );
 create table project(
 	project_id integer auto_increment,
-	langauge varchar(10),
+	language varchar(10),
 	title varchar(20),
 	description varchar(100),
 	url varchar(20),
-	rating smallint default '0',
+	rating decimal( 3,2) default '0',
 	primary key(project_id)
 );
 create table tag(
@@ -58,6 +57,7 @@ create table rates(
 	user_id integer,
 	project_id integer,
 	rating smallint,
+	primary key(user_id, project_id),
 	foreign key(user_id)  references user(user_id) on delete cascade,
 	foreign key(project_id)  references project(project_id) on delete cascade
 );

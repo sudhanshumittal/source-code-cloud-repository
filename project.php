@@ -56,15 +56,16 @@ if(isset($_GET['user_id'])){
 		$time= date('Y-m-d')." ".($secs / 3600 % 24 ).":".($secs / 60 % 60).":".($secs % 60);
 		$query = "insert into comments values(".$_SESSION['user_id'].",".$_GET['project'].",'".$_REQUEST['comment']."','".$time."');";
 		//echo $query;
+		/*mysql injection handling*/
 		$result = mysql_query($query);
 		if (!$result) {
 			die('Invalid query: ' . mysql_error());
 		}
 	 }
 }
-else {
+else {//redirect
 	header("Location: ./index.php");
-}//redirect
+}
 
 if(isset($_GET['file'])){
  $file =  $_GET['file'];
@@ -75,7 +76,7 @@ $url.="&file=".$file;
 //echo "./project.php?".$user_id."&".$project."&".$file ;
 if(isset($_FILES["file"]["name"])) echo upload($user_id,$project);
 if(isset($_REQUEST["project_title"])) echo create_project($user_id, $project, $_REQUEST['project_title'],$_REQUEST['language'], $_REQUEST['description'], $_REQUEST['tags'] );
-if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email"],$_REQUEST["designation_"]);
+if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email"],$_REQUEST["designation_"],$_REQUEST["first_name"],$_REQUEST["last_name"] );
 ?>
 <html>
 <head>
@@ -100,9 +101,10 @@ if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email
 	<div id="alert_field"><?php
 	?></div>
 	<div class="container-fluid">
-  	   <div class="row-fluid">
-		<div class = "row-fluid">
-		<h1><?php echo $user_name ;?></h1>
+  	    <div class = "row-fluid">
+		<h1><?php echo $user_name  ;?></h1>
+		<!-- buttons 	-->
+		
 		<div class="btn-group offset6">
 			  <button class="btn  <?php if($user_id !== $_SESSION['user_id'] or isset($_GET['project'])) echo '" disabled = "disabled' ;
 				else echo 'btn-primary' ;?>" href="#addProjectModal" data-toggle="modal">Add project</button>
@@ -110,8 +112,11 @@ if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email
 				else echo 'btn-primary' ;?>" href="#addFileModal" data-toggle="modal">Add file</button>
 			  <a class="btn <?php if(!isset($_GET['project'])) echo '" disabled = "disabled' ;
 				else echo 'btn-primary' ;?>" 
-			  href="<?php if(isset($_GET['project'])) echo './download.php?project_id='.$_GET['project']; 
-						  if(isset($_GET['file'])) echo "&file_id=".$_GET['file'] ;
+			  href="<?php if(isset($_GET['project'])){ echo './download.php?project_id='.$_GET['project'];
+						  
+							if(isset($_GET['file'])) echo "&file_id=".$_GET['file'] ;
+						 }
+						else echo '#';		
 			  ?>" >Download</a>
 			</div>
 		</div>
@@ -153,7 +158,7 @@ if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email
 						$file = $_GET['file'];
 				
 						echo '<pre class="prettyprint linenums languague-'.$extension.'" >';
-						$code = file_get_contents('./data/'.$user_id.'/'.$project.'/'.$file.'.'.$extension);
+						$code = file_get_contents('./data/'.$user_id.'/'.$project.'/'.$file);
 						echo $code;
 						echo '</pre>';
 					}
@@ -178,8 +183,9 @@ if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email
 							
 						}
 						echo'</div><hr>';
-							
-						about(0);
+						echo '<div class="row-fluid">';
+								about(0);
+						echo '</div>';
 					}
 					else if(isset($_GET['user_id'])){ //user page
 							$user_id = $_GET['user_id'];
@@ -202,7 +208,7 @@ if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email
 								
 							}
 							echo'</div><hr>';
-							echo '<div class="container-fluid">';
+							echo '<div class="row-fluid">';
 								about(1);
 							echo '</div>';
 					
@@ -210,8 +216,8 @@ if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email
 				?>			
 
 			</div>		
-			</div>
-		  <!--comments content-->
+		  </div>
+		<!--comments content-->
 			<div class="span3">
 			  <?php 
 			   if( isset($_GET['project'])) comments();
@@ -219,8 +225,8 @@ if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email
 			  <!--Sidebar content-->
 			</div>
 		</div>
-	  
-	</div>
+	 </div>  <!--container ends -->
+	 
 	<!-- add project form -->
 	<div id="addProjectModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	  <div class="modal-header">
@@ -316,13 +322,21 @@ if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email
 		<form class="form-horizontal" method ="POST" action ="./project.php?user_id=<?php echo $user_id;?> ">
 		 
 		  <div class="control-group">
+			<label class="control-label" for="first_name" >First Name</label>
+			<div class="controls">
+			  <input type="text" name="first_name" value ="<?php echo $_SESSION['first_name']; ?>" placeholder="First name">
+			</div>
+			<label class="control-label" for="last_name">Last Name</label>
+			<div class="controls">
+			  <input type="text" name="last_name" placeholder="last_name" value ="<?php echo $_SESSION['last_name']; ?>">
+			</div>	
 			<label class="control-label" for="inputEmail">Email Address</label>
 			<div class="controls">
-			  <input type="text" name="email" placeholder="Email">
+			  <input type="text" name="email" placeholder="Email" value ="<?php echo $_SESSION['email']; ?>">
 			</div>
 		  </div>
 		  <div class="control-group">
-			<label class="control-label" for="inputEmail">Designation</label>
+			<label class="control-label" for="designation_" value ="<?php echo $_SESSION['designation']; ?>">Designation</label>
 			<div class="controls">
 			<select name="designation_">
 				<option value =0>B.Tech</option>
@@ -350,6 +364,7 @@ if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email
 </html>
 <?php
 	function comments(){
+		echo '<frame style = "height: 500px">';
 		echo '<h3>Comments</h3><hr>';
 		//echo '<div class="media">
 		echo '<dl class = "">';
@@ -357,7 +372,7 @@ if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email
 				<dt><small><textarea rows="3" placeholder="Say something..." class= "span12" name="comment"></textarea></small><dt>';
 		echo '<dd><button class ="btn btn-primary">comment</button></dd></form><hr>';
 		
-		$query = 'select * from user u,comments c where c.project_id = '.$_GET['project'].' and u.user_id = c.user_id order by c.comment_date ';
+		$query = 'select * from user u,comments c where c.project_id = '.$_GET['project'].' and u.user_id = c.user_id order by c.comment_date desc';
 		//echo $query;
 		$result = mysql_query($query);
 		while($i = mysql_fetch_assoc($result)){
@@ -368,6 +383,7 @@ if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email
 			//</div>';
 		}
 		echo '</dl>';
+		echo '</frame>';
 	}
 	function about($type){
 	 
@@ -388,7 +404,11 @@ if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email
 			echo	'<dt>Designation</dt>
 				<dd><small>'.$d.'</small></dd>';
 			echo	'<dt>Skill Rating</dt>
-				<dd><small>'.$i["skill_level"].'</small></dd>';
+				<dd><small>';
+				if($i["skill_level"] > 0 )
+				echo round($i["skill_level"],2)  ;
+				else echo "The user has not been reviewd yet."	;
+			echo '</small></dd>';
 			
 			echo '</dl>';	
 		}
@@ -400,7 +420,7 @@ if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email
 			/*rating bar*/
 			if(isset($_GET['project']) and !isset($_GET['file'])){
 				
-				$query = "select rating from rates where project_id = '".$_GET['project']."';";
+				$query = "select rating from project where project_id = '".$_GET['project']."';";
 				//echo $query;
 				$result = mysql_query($query);
 				if (!$result) {
@@ -410,13 +430,24 @@ if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email
 				$count = 0;
 				while($i = mysql_fetch_assoc($result)){
 					$count++;
-					$rating += $i['rating'];
+					$rating = $i['rating'];
 				}
 				if($count !=0)
-					echo "  ".round($rating/$count, 2)." / 5 ";
+					echo "  ".$rating." / 5 ";
 				else 
 					echo "No one has rated this project yet";
-				if($_GET['user_id'] != $_SESSION['user_id']) /*user cannot rate his own project*/
+				$query = "select rating from rates where project_id = '".$_GET['project']."' and user_id = ".$_SESSION['user_id'].";";	
+				//echo $query;
+				$result = mysql_query($query);
+				if (!$result) {
+						die('Invalid query: ' . mysql_error());
+				}
+				$count = 0;
+				while($i = mysql_fetch_assoc($result)){
+					$count++;
+				}
+			//	echo $count;
+				if($_GET['user_id'] != $_SESSION['user_id'] and $count<=0) /*user cannot rate only someone else's project not more than once*/
 				{
 					echo '<form action= "./rate.php" method = "post" class ="form-inline"> ';
 					echo '<label><select name="rating" class="span14">';
@@ -424,9 +455,8 @@ if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email
 						echo '<option>'.$i.'</option>';
 					echo '</select></label>
 					<button class= "btn btn-primary" type="submit"  >Rate</button>
-					<input class= "hidden span1" type="text" name="project_id" value ="'.$_GET['project'].'" />
-					<input class= "hidden span1" type="text" name = "user_id" value ="'.$_GET['user_id'].'" />					
-					
+					<input class= "hidden span1" type="text" name="project_id" value ="'.$_GET['project'].'" >
+					<input class= "hidden span1" type="text" name = "user_id" value ="'.$_SESSION['user_id'].'" >					
 					';
 					echo '</form>';
 				}
@@ -439,7 +469,7 @@ if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email
 			
 			
 			echo	'<dt>Language</dt>
-				<dd><small>'.$i["langauge"].'</small><dd>';
+				<dd><small>'.$i["language"].'</small><dd>';
 			echo	'<dt>About</dt>
 				<dd><small>'.$i["description"].'</small><dd>';
 			
@@ -450,7 +480,7 @@ if(isset($_REQUEST["designation_"])) echo edit_profile($user_id,$_REQUEST["email
 function create_project($user_id, $project,$title, $language, $description, $tags){
 	/*search if the title already exisits for a user*/
 	/*if not create a project in db*/
-	$query = 'insert into project(title, description, url , langauge ) 
+	$query = 'insert into project(title, description, url , language ) 
 	values ("'.$title.'", "'.$description.'", "data/'.$user_id.'/ ", "'.$language.'")';
 	//echo $query;
 	mysql_query($query);
@@ -578,10 +608,18 @@ function delete_project($pro_id){
 		}
 }
 
-function edit_profile($user_id,$email, $design){
-	$query = 'update user set email = "'.$email.'" , designation = '.$design.' where user_id = '.$user_id.';';  
+function edit_profile($user_id,$email, $design, $first_name, $last_name){
+	$query = 'update user set email = "'.$email.'" , designation = '.$design.', first_name ="'.$first_name.'", last_name = "'.$last_name.'"
+	where user_id = '.$user_id.';';  
+	//echo $query;
 	mysql_query($query);
+	$_SESSION['first_name'] = $first_name;
+	$_SESSION['last_name'] = $last_name;
+	$_SESSION['designation'] =$design;
+	$_SESSION['email'] =$email;
+	$user_name = $_SESSION['first_name']." ".$_SESSION['last_name'];	 
 	alert_success("Profile Successfully Updated.");
+	
 }
 
 function delete_code($id){

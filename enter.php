@@ -21,14 +21,16 @@
 			{
 			/*user found*/
 				session_start();
-				$query = "select user_id,first_name, last_name from user where email='".$_REQUEST['loginEmail']."';";
+				$query = "select user_id,first_name, last_name, email from user where email='".$_REQUEST['loginEmail']."';";
 				echo $query;
 				$result = mysql_query($query);
 				while($i = mysql_fetch_assoc($result)){
 					$_SESSION['user_id'] = $i['user_id'];
 					$_SESSION['first_name'] = $i['first_name'];
 					$_SESSION['last_name'] = $i['last_name'];
-					echo $_SESSION['user_id'];
+					$_SESSION['designation'] ="";
+					$_SESSION['email'] =$_REQUEST['loginEmail'];
+					
 				}				
 				mysql_close($con);
 				header("Location: ./index.php");
@@ -63,6 +65,9 @@
 					$_SESSION['user_id'] = $i['user_id'];
 					$_SESSION['first_name'] = $i['first_name'];
 					$_SESSION['last_name'] = $i['last_name'];
+					$_SESSION['designation'] ="";
+					$_SESSION['email'] =$_REQUEST['inputEmail'];
+					
 				}				
 				mysql_close($con);
 				/*create a folder for the user */

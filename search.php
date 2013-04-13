@@ -48,16 +48,19 @@ if (!$con)
 	   foreach( $searchText as $word){
 			if ($word =="" or $word ==" ") continue;
 			$word = "REGEXP '.*".$word.".*'";
-			$query = "select distinct u.user_id,u.first_name,u.last_name, p.project_id,p.title,p.description
+			$query = "select distinct u.user_id,u.first_name,u.last_name, p.project_id,p.title,p.description, p.language, p.rating
 								from user u,project p, shares s
-								where u.user_id=s.project_id
+								where u.user_id=s.user_id
 								and s.project_id=p.project_id
-								and ( p.project_id in (select project_id from tag where tag_name ".$word.")
-								or u.first_name	 ".$word."
-								or u.last_name ".$word."
-								or u.email  ".$word."
-								or p.title  ".$word."
-								or p.description  ".$word.");";
+								and ( 
+									p.project_id in (select project_id from tag where tag_name ".$word.")
+									or u.first_name	 ".$word."
+									or u.last_name ".$word."
+									or u.email  ".$word."
+									or p.title  ".$word."
+									or p.description  ".$word."
+									or p.language  ".$word."
+								);";
 			//echo $query ;
 			$results = mysql_query($query);
 			if (!$results) {
@@ -72,6 +75,10 @@ if (!$con)
 					<h3><a href="project.php?user_id='.$i["user_id"].'">'.$i["first_name"]." ".$i["last_name"].
 					'</a> / <a href ="project.php?user_id='.$i["user_id"].'&project='.$i["project_id"].'">'.$i["title"].'</a></h3>
 					<dl class="dl-horizontal"></d>
+					<dt>Rating</dt>
+					<dd>'.$i["rating"].'</dd>
+					<dt>Language</dt>
+					<dd>'.$i["language"].'</dd>
 					<dt>Description</dt>
 					<dd>'.$i["description"].'</dd>
 								   </div><hr>';

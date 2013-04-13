@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="IITG%20Code%20Repository_files/bootstrap-responsive.css" rel="stylesheet">
+	<link rel="stylesheet" href="IITG%20Code%20Repository_files/bootstrap.css">
+	<link href="IITG%20Code%20Repository_files/prettify.css" type="text/css" rel="stylesheet">
+	<style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+		padding-left: 60px;
+		padding-right: 60px;
+	  }
+    </style>
+	<title>IITG Code Repository</title>
+</head>
+<body onload="prettyPrint()">
+	
+<div class="navbar navbar-inverse navbar-fixed-top">
+		  <div class="navbar-inner">
+			<div class="container">
+			  <a class="brand" href="http://localhost/dbpro/index.php">Code Repo</a>
+			  <div class="nav-collapse collapse">
+				<ul class="nav"> 
+				 <li><a href="http://localhost/dbpro/index.php"> Home</a></li>
+				  <li class="active"><a href="#">Profile</a></li>
+				  <li><a href="#about">About</a></li>
+			
+				  <li class="pull right"><a href="http://localhost/dbpro/signout.php">Sign out</a></li>
+				</ul>
+			  </div> <!--/.nav-collapse -->
+				<form class="navbar-search pull-right" method="GET" action="search.php">
+					<div class="input-prepend">					  
+					  <input class="search-query span4 " id="inputIcon" name="searchText" placeholder="Search someone or something…" type="text">
+					</div>				  
+				</form>
+			</div>
+		  </div>
+		</div>	<div id="alert_field"></div>
+	<div class="container-fluid">
+  	    <div class="row-fluid">
+		<h1>sudhanshu mittal</h1>
+		<!-- buttons 	-->
+		
+		<div class="btn-group offset6">
+			  <button class="btn  " disabled="disabled" href="#addProjectModal" data-toggle="modal">Add project</button>
+			  <button class="btn  " disabled="disabled" href="#addFileModal" data-toggle="modal">Add file</button>
+			  <a class="btn btn-primary" href="http://localhost/dbpro/download.php?project_id=1">Download</a>
+			</div>
+		</div>
+		<hr>
+	 <!-- body-->
+	  <div class="row-fluid">
+			<div class="span9 ">
+			<div class="row-fluid">
+			<!-- breadcrumbs-->
+				<ul class="breadcrumb" style="background-color:#E8EFFD;">
+				<li><a href="http://localhost/dbpro/project.php?user_id=1">sudhanshu mittal</a> <span class="divider">/</span></li><li class="active">hello world</li>				
+				</ul>
+				<div class="row-fluid">				</div>
+				<div class="container"><h3>Files</h3><a href="http://localhost/dbpro/project.php?user_id=1&amp;project=1&amp;file=1">merge.cpp</a> <br></div></div><hr><div class="row-fluid"><dl class="dl-horizontal"><dt>Project rating</dt>
+				<dd><small>  4.50 / 5 <form action="./rate.php" method="post" class="form-inline"> <label><select name="rating" class="span14"><option selected="selected">5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></label>
+					<button class="btn btn-primary" type="submit">Rate</button>
+					<input class="hidden span1" name="project_id" value="1" type="text">
+					<input class="hidden span1" name="user_id" value="2" type="text">					
+					</form></small></dd><dd></dd><dt>Language</dt>
+				<dd><small>C++</small></dd><dd></dd><dt>About</dt>
+				<dd><small>trial project</small></dd><dd></dd></dl></div>			
+
+			</div>		
+		  </div>
+			<!--comments content-->
+			<div class="span3">
+			  <h3>Comments</h3><hr><dl class=""><form action="project.php?user_id=1&amp;project=1" method="POST">
+				<dt><small><textarea rows="3" placeholder="Say something..." class="span12" name="comment"></textarea></small></dt><dt></dt><dd><button class="btn btn-primary">comment</button></dd></form><hr></dl>			  <!--Sidebar content-->
+			</div>
+		</div>
+	   <!--container ends -->
+	 
+	<!-- add project form -->
+	<div id="addProjectModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
+		<h3 id="myModalLabel">Create a new Project</h3>
+	  </div>
+	  <form method="POST" action="./project.php?user_id=1 ">
+	  <div class="modal-body">
+		<table>
+			<tbody><tr>
+				<td><input name="project_title" placeholder="project title" type="text"></td>
+			</tr>
+			<tr>
+				<td>
+					<select name="language" value="language">
+					<option selected="selected">C</option>
+					<option>C++</option>
+					<option>Php</option>
+					<option>Java</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td> <input name="description" placeholder="project description" type="text"></td>
+			</tr>
+			<tr>
+				<td><input name="tags" placeholder="Tags seperated by comma" type="text"></td>	
+			</tr>
+		</tbody></table>
+	  </div>
+	  <div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		<button class="btn btn-primary" type="submit">Continue</button>
+	  </div>
+	  </form>
+	</div>
+	<!-- drop project form -->
+	<div id="dropProjectModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
+		<h3 id="myModalLabel">Drop Project</h3>
+	  </div>
+	  <div class="modal-body">
+		<p id="delete_project_para"></p>
+		<p>Are you sure you want to continue?</p>
+	  </div>
+	  <div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		<a class="btn btn-primary" id="delete_project">Continue</a>
+	  </div>
+	</div>
+	<!-- add file form -->
+	<div id="addFileModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
+		<h3 id="myModalLabel">Add a new file to this Project</h3>
+	  </div>
+	  <form action="./project.php?user_id=1&amp;project=1" method="post" enctype="multipart/form-data">
+	  <div class="modal-body">
+		
+		<input name="file" id="file" class="" type="file"><br>
+	  </div>
+	  <div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		<button class="btn btn-primary" type="submit">Upload</button>
+	  </div>
+	  </form>
+
+	</div>
+	<!-- drop file form -->
+	<div id="dropFileModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
+		<h3 id="myModalLabel">Drop files from this Project</h3>
+	  </div>
+	  <div class="modal-body">
+		<p id="delete_code_para">asjdhkh</p>
+		<p>Are you sure you want to continue?</p>
+	  </div>
+	  <div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+		<a class="btn btn-primary" id="delete_code">Continue</a>
+	  </div>
+	</div>
+	<!-- Edit Profile form -->
+	<div id="editProfileModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
+		<h3 id="myModalLabel">Edit Your Profile</h3>
+	  </div>
+	  <p>
+		</p><form class="form-horizontal" method="POST" action="./project.php?user_id=1 ">
+		 
+		  <div class="control-group">
+			<label class="control-label" for="first_name">First Name</label>
+			<div class="controls">
+			  <input name="first_name" value="aditya" placeholder="First name" type="text">
+			</div>
+			<label class="control-label" for="last_name">Last Name</label>
+			<div class="controls">
+			  <input name="last_name" placeholder="last_name" value="sharma" type="text">
+			</div>	
+			<label class="control-label" for="inputEmail">Email Address</label>
+			<div class="controls">
+			  <input name="email" placeholder="Email" value="adityasharma@gmail.com" type="text">
+			</div>
+		  </div>
+		  <div class="control-group">
+			<label class="control-label" for="designation_" value="">Designation</label>
+			<div class="controls">
+			<select name="designation_">
+				<option selected="selected" value="0">B.Tech</option>
+				<option value="1">M.Tech</option>
+				<option value="2">PhD</option>
+				<option value="3">Faculty</option>
+				<option value="4">Other</option>
+			</select>
+			</div>
+		  </div>
+		  <div class="modal-footer">
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+			<button class="btn btn-primary" type="submit">Continue</button>
+		  </div>
+		</form>
+	  <p></p>
+	</div>
+	
+	
+	<script src="IITG%20Code%20Repository_files/jquery-1.js"></script>
+	<script src="IITG%20Code%20Repository_files/bootstrap.js"></script>
+	<script type="text/javascript" src="IITG%20Code%20Repository_files/prettify.js"></script>
+	
+	
+
+ <script>
+ function drop_project(pro, title){
+	//alert(title);
+	document.getElementById("delete_project").href = "./project.php?user_id="+1+"&del_project="+pro;
+	document.getElementById("delete_project_para").innerHTML = "You are about to delete the project named - <strong>"+title+"</strong>";
+ } 
+ 
+ function edit_profile(){
+	alert("edit_profile");
+	//document.getElementById("delete_project").href = "./project.php?user_id="+1+"&del_project="+pro;
+	//document.getElementById("delete_project_para").innerHTML = "You are about to delete the project named - <strong>"+title+"</strong>";
+ } 
+ function drop_code(code_id, title){
+	//alert(code_id+" "+title);
+	document.getElementById("delete_code").href = "./project.php?user_id="+1+"&project_id="+1+"&del_code="+code_id;
+	document.getElementById("delete_code_para").innerHTML = "You are about to delete the file named - <strong>"+title+"</strong>";
+ }
+ </script>
+</body></html>
