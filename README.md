@@ -1,11 +1,18 @@
 Source code Cloud Repository
 ============================
 <p>
-jan-may 2013 <br>
+April-May 2013 <br>
 database lab - CS345 <br>
 Guide: Dr. Sanasam Ranbir Singh <br>
 Associate Professor, <br>
 Indian Institute of Technology Guwahati
+</p>
+<h2>Contributors</h2>
+<p>
+Sudhanshu Mittal<br>
+Aditya Sharma<br>
+Shrninivas Acharya<br>
+Samarth Tripathi<br>
 </p>
 <hr>
 <h2>About the project</h2>

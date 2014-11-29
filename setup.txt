@@ -1,0 +1,16 @@
+@ECHO executing scripts...
+@ECHO 1st installing wampserver...
+WampServer2-setupx64.exe
+start C:\wamp\wampmanager.exe
+set /P pause= Enter Y after you've set environment variable to continue...
+mkdir C:\wamp\www\iitgCodeRepository
+xcopy /s iitgCodeRepository C:\wamp\www\iitgCodeRepository
+set /P mysqlhostname= Enter MySQL hostname :
+set /P mysqlusername= Enter MySQL username :
+set mysqlpassword=
+set /P mysqlpassword= Enter MySQL password :
+mysql --host=%mysqlhostname% --user=%mysqlusername% --password= %mysqlpassword% < C:\wamp\www\iitgCodeRepository\database\code_repo_sql.sql
+del C:\wamp\www\iitgCodeRepository\config.php
+copy /y nul C:\wamp\www\iitgCodeRepository\config.php
+echo ^<?php $mysqlhostname = '%mysqlhostname%'  ; $mysqlusername = '%mysqlusername%' ;  $password='%mysqlpassword%'; ?^> > C:\wamp\www\iitgCodeRepository\config.php
+mkdir C:\wamp\www\iitgCodeRepository\data
